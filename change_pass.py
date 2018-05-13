@@ -9,8 +9,10 @@ router_ip = config['ROUTER']['ip']
 router_username = config['ROUTER']['username']
 router_password = config['ROUTER']['password']
 wifi_ssid = config['WIFI']['ssid']
+wifi_password_length = int(config['WIFI']['pw_len'])
 
-new_pass = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=60))
+string_list = random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=wifi_password_length)
+new_pass = ''.join(string_list)
 post_dict = {'PrimaryNetworkEnable': 1,
              'ServiceSetIdentifier': wifi_ssid,
              'ClosedNetwork': 0,
@@ -19,7 +21,6 @@ post_dict = {'PrimaryNetworkEnable': 1,
              'Wpa2PskAuth': 1,
              'WpaEncryption': 2,
              'WpaPreSharedKey': new_pass,
-             'ShowWpaKey': 0x01,
              'PlainTextKey': '',
              'EncryptedKey': '',
              'WpaRekeyInterval': 0,
