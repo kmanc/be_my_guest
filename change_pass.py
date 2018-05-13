@@ -8,10 +8,11 @@ config.read('config.ini')
 router_ip = config['ROUTER']['ip']
 router_username = config['ROUTER']['username']
 router_password = config['ROUTER']['password']
+wifi_ssid = config['WIFI']['ssid']
 
 new_pass = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=60))
 post_dict = {'PrimaryNetworkEnable': 1,
-             'ServiceSetIdentifier': 'KoinsFi',
+             'ServiceSetIdentifier': wifi_ssid,
              'ClosedNetwork': 0,
              'BssModeRequired': 0,
              'WpaPskAuth': 0,
