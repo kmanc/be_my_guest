@@ -1,7 +1,7 @@
 import configparser
-import random
 import requests
 import string
+from random import choices
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -9,10 +9,10 @@ router_ip = config['ROUTER']['ip']
 router_username = config['ROUTER']['username']
 router_password = config['ROUTER']['password']
 wifi_ssid = config['WIFI']['ssid']
-wifi_password_length = int(config['WIFI']['pw_len'])
+wifi_password_length = int(config['WIFI']['password_length'])
 
-string_list = random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=wifi_password_length)
-new_pass = ''.join(string_list)
+new_pass = ''.join(choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=wifi_password_length))
+
 post_dict = {'PrimaryNetworkEnable': 1,
              'ServiceSetIdentifier': wifi_ssid,
              'ClosedNetwork': 0,
@@ -34,6 +34,10 @@ response = requests.post(f'http://{router_ip}/goform/wlanPrimaryNetwork',
                          auth=(router_username, router_password))
 try:
     assert response.status_code == 200
+    assert new_pass in response.content.decode("utf-8")
+    config['WIFI']['password'] = new_pass
+    with open('config.ini', 'w') as f:
+        config.write(f)
     print(f'Wifi password was successfully altered')
 except AssertionError:
     print(f'Wifi password could not be changed, received a {response.status_code} from the router POST')
