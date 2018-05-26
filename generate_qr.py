@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import configparser
 import ssl
 import urllib.parse
