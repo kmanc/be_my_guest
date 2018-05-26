@@ -29,10 +29,11 @@ post_dict = {'PrimaryNetworkEnable': 1,
              'commitwlanPrimaryNetwork': 1,
              'AutoSecurity': 1}
 
-response = requests.post(f'http://{router_ip}/goform/wlanPrimaryNetwork',
-                         data=post_dict,
-                         auth=(router_username, router_password))
+
 try:
+    response = requests.post(f'http://{router_ip}/goform/wlanPrimaryNetwork',
+                             data=post_dict,
+                             auth=(router_username, router_password))
     assert response.status_code == 200
     assert new_pass in response.content.decode("utf-8")
     config['WIFI']['password'] = new_pass
@@ -41,3 +42,9 @@ try:
     print(f'Wifi password was successfully altered')
 except AssertionError:
     print(f'Wifi password could not be changed, received a {response.status_code} from the router POST')
+except requests.exceptions.Timeout:
+    print(f'The request to change the Wifi password timed out')
+except requests.exceptions.TooManyRedirects:
+    print(f'The request to change the Wifi password redirected too many times and was not able to complete')
+except requests.exceptions.RequestException:
+    print(f'The request to change the Wifi password incurred an unknown error')
