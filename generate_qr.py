@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/local/bin/python3
 import configparser
 import ssl
 import urllib.parse
@@ -23,7 +23,7 @@ def make_qr_code(text):
         assert image[:8] == bytes([137, 80, 78, 71, 13, 10, 26, 10])
         return image
     except AssertionError:
-        print('The QR code failed to generate correctly')
+        print(f'The QR code failed to generate correctly')
         exit(0)
 
 
