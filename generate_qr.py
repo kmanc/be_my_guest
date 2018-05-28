@@ -16,12 +16,12 @@ def make_qr_code(text):
     query = dict(cht='qr', chs='300x300', chl=text)
     url = root_url + urllib.parse.urlencode(query)
     with urllib.request.urlopen(url, context=ssl.SSLContext()) as u:
-        image = u.read()
+        qr_image = u.read()
     # According to www.w3.org/TR/PNG/#5PNG-file-signature, first 8 bytes should match
     # 137 80 78 71 13 10 26 10
     try:
-        assert image[:8] == bytes([137, 80, 78, 71, 13, 10, 26, 10])
-        return image
+        assert qr_image[:8] == bytes([137, 80, 78, 71, 13, 10, 26, 10])
+        return qr_image
     except AssertionError:
         print(f'The QR code failed to generate correctly')
         exit(0)
