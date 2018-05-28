@@ -49,3 +49,17 @@ except requests.exceptions.TooManyRedirects:
     print(f'The request to change the Wifi password redirected too many times and was not able to complete')
 except requests.exceptions.RequestException:
     print(f'The request to change the Wifi password incurred an unknown error')
+
+try:
+    with open('/etc/wpa_supplicant/wpa_supplicant.conf', 'r') as f:
+        lines = f.readlines()
+        for index, line in enumerate(lines):
+            if f'ssid="{wifi_ssid}"' in line:
+                break
+        update_index = index + 1
+        lines[update_index] = f'\tpsk="{new_pass}"\n'
+    with open('test.conf', 'w') as f:
+        for line in lines:
+            f.write(line)
+except NameError as e:
+    print(e)
