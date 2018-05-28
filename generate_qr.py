@@ -1,11 +1,13 @@
 #!/usr/local/bin/python3
 import configparser
+import os
 import ssl
 import urllib.parse
 import urllib.request
 
 config = configparser.ConfigParser()
-config.read('config.ini')
+dir_path = os.path.dirname(os.path.realpath(__file__))
+config.read(f'{dir_path}/config.ini')
 wifi_password = config['WIFI']['password']
 
 
@@ -28,5 +30,5 @@ def make_qr_code(text):
 
 
 qr = make_qr_code(wifi_password)
-with open('wifi_qr.png', 'wb') as image:
+with open(f'{dir_path}/wifi_qr.png', 'wb') as image:
     image.write(qr)
