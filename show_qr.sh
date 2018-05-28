@@ -1,3 +1,3 @@
 #!/bin/bash
-sudo fbi -T 1 --noverbose -a wifi_qr.png
-sudo systemctl restart networking.service
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+sudo fbi -T 1 --noverbose -a $DIR/wifi_qr.png
