@@ -6,8 +6,8 @@ import urllib.parse
 import urllib.request
 
 config = configparser.ConfigParser()
-config_file = f'{os.path.dirname(os.path.realpath(__file__))}/config.ini'
-config.read(config_file)
+dir_path = os.path.dirname(os.path.realpath(__file__))
+config.read(f'{dir_path}/config.ini')
 wifi_password = config['WIFI']['password']
 
 
@@ -30,6 +30,5 @@ def make_qr_code(text):
 
 
 qr = make_qr_code(wifi_password)
-qr_file = f'{os.path.dirname(os.path.realpath(__file__))}/wifi_qr.png'
-with open(qr_file, 'wb') as image:
+with open(f'{dir_path}/wifi_qr.png', 'wb') as image:
     image.write(qr)
