@@ -6,8 +6,8 @@ import string
 from random import choices
 
 config = configparser.ConfigParser()
-dir_path = os.path.dirname(os.path.realpath(__file__))
-config.read(f'{dir_path}/config.ini')
+config_file = f'{os.path.dirname(os.path.realpath(__file__))}/config.ini'
+config.read(config_file)
 router_ip = config['ROUTER']['ip']
 router_username = config['ROUTER']['username']
 router_password = config['ROUTER']['password']
@@ -40,7 +40,7 @@ try:
     assert response.status_code == 200
     assert new_pass in response.content.decode("utf-8")
     config['WIFI']['password'] = new_pass
-    with open(f'{dir_path}/config.ini', 'w') as f:
+    with open(config_file, 'w') as f:
         config.write(f)
     print(f'Wifi password was successfully altered')
 except AssertionError:
