@@ -223,7 +223,8 @@ can. That way the amount of setup required to recreate my results is as little a
    * :literal:`sudo losetup -d /dev/loop0`
    * :literal:`truncate -s $(((END+1)*512)) <image_name>.img`
 
-And that was it! Now I have a custom Rasbian Stretch Lite image with all the setup done for my use case.
+And that was it! Now I have a custom Rasbian Stretch Lite image with all the setup done for my use case. It is being
+hosted `here <https://github.com/kmanc/custom_raspbian_stetch_lite/>`_ if you'd like to pull it down
 
 Getting this repo running on the Pi
 ###################################

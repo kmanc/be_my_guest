@@ -15,8 +15,10 @@ Requirements
 The easiest way - Raspbian image
 ################################
 In order to avoid driver/setup hell, I created a Raspbian (Stretch) image that has the drivers for the above hardware,
-git, fbi, python3.6, and ssh ready to go out of the box you can get the image `here <https://127.0.0.1>`_.
-To use it (I always write my images on a Windows machine), do the following:
+git, fbi, python3.6, and ssh ready to go out of the box you can get the image
+`here <https://github.com/kmanc/custom_raspbian_stetch_lite/>`_ or by running
+:literal:`sudo git clone https://github.com/kmanc/custom_raspbian_stetch_lite.git`. To use it (I always write my images
+on a Windows machine), do the following:
 
 * Open up Win32DiskImager, and write the .img file to your SD card
 * Plug the Pi into power, and an ethernet cable, and SSH in with the default :literal:`pi@<ip_address>`. The default
