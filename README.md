@@ -40,4 +40,4 @@ every month. I find this to be a reasonable amount of time for a person to have
 access without needing to rescan the QR code
 
 For more on how I built this project, and how you can do it to, check out
-[the full documentation here](https://link_to_sphinx_shit_PLSDONTRESOLVE.com)
+[the full documentation here](https://kmanc.github.io/wifi_qr/)
