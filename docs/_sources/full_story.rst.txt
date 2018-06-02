@@ -1,0 +1,33 @@
+**********
+Full Story
+**********
+
+How do I change a password programmatically
+###########################################
+
+
+Generating a QR code
+####################
+
+
+Making the user experience clean
+################################
+
+
+Raspberry Pi and drivers...a story of pain and suffering
+########################################################
+
+
+SSH and other Rasbian configuration
+###################################
+
+
+Creating an image so that you don't have to suffer
+##################################################
+
+
+Getting things running on the Pi
+################################
+
+Tying it all together in cron
+#############################
