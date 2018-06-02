@@ -32,29 +32,298 @@
             
   <div class="section" id="full-story">
 <h1>Full Story<a class="headerlink" href="#full-story" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="how-do-i-change-a-password-programmatically">
-<h2>How do I change a password programmatically<a class="headerlink" href="#how-do-i-change-a-password-programmatically" title="Permalink to this headline">¶</a></h2>
+<p>Like I mentioned in the Github README, this project was really created to make the user experience for my friends
+connecting to my home wifi as painless as possible, while at the same time making the authentication mechanism
+ephemeral. So how did this whole thing go down?</p>
+<div class="section" id="changing-a-password-programmatically">
+<h2>Changing a password programmatically<a class="headerlink" href="#changing-a-password-programmatically" title="Permalink to this headline">¶</a></h2>
+<p>The first thing I knew I wanted to do was automate the process of changing the password on my wifi network. When I
+manually change the password, it is through a web interface on my home network, so I figured I would have to mimic
+that via some kind of script. I like Python, and the requests module is really easy to use, so I figured it would
+probably be what I needed. However, I didn’t know what the traffic to my router looked like…</p>
+<p>Enter Google Chrome’s developer options. By viewing the developer tools (specifically the network traffic tab) while I
+clicked around the interface gave me exactly what I was looking for:</p>
+<ul class="simple">
+<li>First, my router supports both the 2.4GHz band, and the 5GHz band; I wanted this project to only apply to the 2.4
+band, so I needed a way to make sure that my changes would only ever be applied to that network. In the picture
+below, you can see what data is sent to what URL when I select the 2.4GHz band</li>
+</ul>
+<img alt="_images/ensure_two_four_band.png" src="_images/ensure_two_four_band.png" />
+<ul class="simple">
+<li>So now I know that if I want to guarantee that my changes only ever affect the 2.4GHz band, I just need to start off
+by POSTing a JSON object that looks like the form data above to my router</li>
+<li>The same approach was taken to figure out how to actually change my password. Below is a screenshot of the network
+traffic tab output when I manually changed my wifi password</li>
+</ul>
+<img alt="_images/change_password.png" src="_images/change_password.png" />
+<ul class="simple">
+<li>The URL is different, and the JSON has a few more key/value pairs, but this is another really easy POST</li>
+</ul>
+<p>Cool, so now I’ve figured out what I have to send to my router in order to change the password, but how did I do it?</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">change_pass.py</span></code> reads a config file containing my router credentials, and the IP address it can be reached
+at, and uses those to POST data with Python’s requests module. It first makes sure I am only changing the 2.4GHz
+band, then it changes the password to a randomly generated string. It writes that string back to the config file for
+later use.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It also writes that data to a file that the Raspberry Pi uses for connecting to wifi - my setup involves me
+changing the password to the network that I am currently connected to, which means I have to reconnect before
+doing anything else. But more on that later.</p>
+</div>
 </div>
 <div class="section" id="generating-a-qr-code">
 <h2>Generating a QR code<a class="headerlink" href="#generating-a-qr-code" title="Permalink to this headline">¶</a></h2>
+<p>Now I had a script that could change my password, which is cool, but not all that useful unless I wanted to go
+digging around in config files on my Raspberry Pi every time it changed. My solution here was to generate a QR code
+that contained the authentication data (I’m purposely being vague here and not saying “password”, is this
+foreshadowing? Stay tuned.)</p>
+<ul class="simple">
+<li>It turns out generating a QR code in Python is really easy, and I happened to have some code lying around that was
+already working. <a class="reference external" href="https://chart.googleapis.com/chart?">https://chart.googleapis.com/chart?</a> allows you to send
+Google data and get back a QR code representing that data</li>
+<li><code class="docutils literal notranslate"><span class="pre">generate_qr.py</span></code> does that and writes the resulting QR code png file to disk</li>
+</ul>
+<p>I’m done right?!? I can change my password, and I can make a png file of that QR code - let’s call it a day.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Wrong</p>
 </div>
-<div class="section" id="making-the-user-experience-clean">
-<h2>Making the user experience clean<a class="headerlink" href="#making-the-user-experience-clean" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="raspberry-pi-and-drivers-a-story-of-pain-and-suffering">
-<h2>Raspberry Pi and drivers…a story of pain and suffering<a class="headerlink" href="#raspberry-pi-and-drivers-a-story-of-pain-and-suffering" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="ssh-and-other-rasbian-configuration">
 <h2>SSH and other Rasbian configuration<a class="headerlink" href="#ssh-and-other-rasbian-configuration" title="Permalink to this headline">¶</a></h2>
+<p>In order to administer the Pi remotely, display things to the LCD screen, connect to wifi on boot, run Python3.6 code,
+and a few other things, I needed to install some packages and change some config files. I should note here that setting
+up SSH on the Pi was the first thing I did because I am running the whole thing headless. Anyways, here’s what I did:</p>
+<ul class="simple">
+<li>I chose Raspbian Stretch Lite as my version of Raspbian to build this project on</li>
+<li>Made a blank file called <code class="docutils literal notranslate"><span class="pre">SSH</span></code> and copied it into the boot partition so that I can remotely administer
+the Pi</li>
+<li>Plugged the Pi into power, and an ethernet cable, and SSHed in with the default <code class="docutils literal notranslate"><span class="pre">pi&#64;&lt;ip_address&gt;</span></code>. The
+default password is “raspbian” (no quotes)</li>
+<li>I always then change the default passwords to something else, by running <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">passwd</span> <span class="pre">root</span></code> and
+<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">passwd</span> <span class="pre">pi</span></code></li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">update</span> <span class="pre">&amp;&amp;</span> <span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">upgrade</span></code> to make sure that everything is up-to-date</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">git</span></code> so I could use git</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">fbi</span></code> so you I could display to my LCD screen</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">libreadline-gplv2-dev</span> <span class="pre">libncursesw5-dev</span> <span class="pre">libssl-dev</span> <span class="pre">libsqlite3-dev</span> <span class="pre">tk-dev</span> <span class="pre">libgdbm-dev</span> <span class="pre">libc6-dev</span> <span class="pre">libbz2-dev</span></code>
+for a bunch of packages that I needed for Python</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">wget</span> <span class="pre">https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tar.xz</span></code> to pull down the Python 3.6.5 release</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">xf</span> <span class="pre">Python-3.6.5.tar.xz</span></code> to unzip it</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">Python-3.6.5</span></code></li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">./configure</span></code></li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">make</span></code></li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">make</span> <span class="pre">install</span></code></li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">pip</span></code></li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">nano</span> <span class="pre">/etc/network/interfaces</span></code> and set up my interfaces like below</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">auto</span> <span class="n">lo</span>
+<span class="n">iface</span> <span class="n">lo</span> <span class="n">inet</span> <span class="n">loopback</span>
+
+<span class="n">auto</span> <span class="n">eth0</span>
+<span class="n">allow</span><span class="o">-</span><span class="n">hotplug</span> <span class="n">eth0</span>
+<span class="n">iface</span> <span class="n">eth0</span> <span class="n">inet</span> <span class="n">dhcp</span>
+
+<span class="n">auto</span> <span class="o">&lt;</span><span class="n">interface</span><span class="o">&gt;</span>
+<span class="n">allow</span><span class="o">-</span><span class="n">hotplug</span> <span class="n">wlan0</span>
+<span class="n">iface</span> <span class="o">&lt;</span><span class="n">interface</span><span class="o">&gt;</span> <span class="n">inet</span> <span class="n">dhcp</span>
+<span class="n">wpa</span><span class="o">-</span><span class="n">conf</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">wpa_supplicant</span><span class="o">/</span><span class="n">wpa_supplicant</span><span class="o">.</span><span class="n">conf</span>
+
+<span class="n">iface</span> <span class="o">&lt;</span><span class="n">wifi_nickname</span><span class="o">&gt;</span> <span class="n">inet</span> <span class="n">dhcp</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">nano</span> <span class="pre">/etc/wpa_supplicant/wpa_supplicant.conf</span></code> and set up my wifi connections like below</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctrl_interface</span><span class="o">=</span><span class="n">DIR</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">wpa_supplicant</span> <span class="n">GROUP</span><span class="o">=</span><span class="n">netdev</span>
+<span class="n">update_config</span><span class="o">=</span><span class="mi">1</span>
+
+<span class="n">network</span><span class="o">=</span><span class="p">{</span>
+  <span class="n">id_str</span><span class="o">=</span><span class="s2">&quot;&lt;wifi_nickname&gt;&quot;</span>
+  <span class="n">ssid</span><span class="o">=</span><span class="s2">&quot;&lt;SSID&gt;&quot;</span>
+  <span class="n">psk</span><span class="o">=</span><span class="s2">&quot;&lt;password&gt;&quot;</span>
+  <span class="n">proto</span><span class="o">=</span><span class="n">RSN</span>
+  <span class="n">key_mgmt</span><span class="o">=</span><span class="n">WPA</span><span class="o">-</span><span class="n">PSK</span>
+  <span class="n">pairwise</span><span class="o">=</span><span class="n">CCMP</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="raspberry-pi-and-drivers-a-story-of-pain-and-suffering">
+<h2>Raspberry Pi and drivers…a story of pain and suffering<a class="headerlink" href="#raspberry-pi-and-drivers-a-story-of-pain-and-suffering" title="Permalink to this headline">¶</a></h2>
+<p>The whole point of this project was to make something that I could leave in the corner of my living room, and direct
+people to when they arrive so that they can get on my network. Raspberry Pis are pretty much the gold standard for that
+kind of thing, except for when the drivers you need for your other hardware is poorly maintained and/or poorly
+documented. I’m using Raspbian Stretch Lite with an <a class="reference external" href="https://www.amazon.com/gp/product/B011T5IF06/">OURLINK AC600</a>
+wifi dongle and a <a class="reference external" href="https://www.amazon.com/gp/product/B01IGBDT02/">LANDZO 3.5 inch LCD screen</a>. Lucky for me, this
+means that nothing works out of the box, and I get to learn (by trial and error - and a lot of re-imaging my Pi)</p>
+<div class="section" id="the-wifi-dongle">
+<h3>The Wifi Dongle<a class="headerlink" href="#the-wifi-dongle" title="Permalink to this headline">¶</a></h3>
+<p>First thing’s first; I need internet. I like the OURLINK AC600 because it supports both 2.4 and 5 GHz bands, and it
+allows me to use SoftAP mode (presenting as an access point). That isn’t really all that helpful for this project, but
+I had a bunch lying around because I bought a bunch for other projects that will need SoftAP mode. The OURLINK AC600
+uses the Realtek rtl8812au driver, so to Google I went. Fortunately for me, a few folks created
+<a class="reference external" href="https://github.com/gnab/rtl8812au/">this repo</a> which includes everything needed to set up the rtl8812au on Linux.
+However, their use-case is not configured to work as-is on the Raspberry Pi, so I forked the repo
+<a class="reference external" href="https://github.com/kmanc/rtl8812au/">here</a> and changed the config file so that all I really have to do is run the
+installer script. So to get up and running, I:</p>
+<ul class="simple">
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">raspberrypi-kernel-headers</span></code> which was needed to help set up drivers</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/kmanc/rtl8812au.git</span></code> to clone my repo</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">rtl8812au</span></code></li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">install.sh</span></code> so I could actually run the installer script</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">./install.sh</span></code> to install the things</li>
+</ul>
+<p>This got my wifi dongle working, which was a big plus. I was no longer tethered to ethernet.</p>
+</div>
+<div class="section" id="the-lcd-screen">
+<h3>The LCD Screen<a class="headerlink" href="#the-lcd-screen" title="Permalink to this headline">¶</a></h3>
+<p>Now I needed to set up my LCD screen. This one…was rough. There is documentation on the website that outlines how to
+get it working, but it is outdated and incorrect. Fortunately the waveshare35a drivers that the screen uses are not
+uncommon, and after a lot of searching, trying, and failing I came across an
+<a class="reference external" href="https://www.amazon.com/gp/customer-reviews/R3CGCFPLQ232W2/">Amazon customer review</a> that outlines the correct way
+to get a screen using the waveshare35a drivers to work. I made as many of the config file changes as I could and put
+them in <a class="reference external" href="https://github.com/kmanc/waveshare35a">another repo of mine</a>, so that all I had to do is the following:</p>
+<ul class="simple">
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">nano</span> <span class="pre">/boot/config.txt</span></code> and add the following to the very end of the file. This lets my Pi
+know what drivers I want to load for my display</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dtparam</span><span class="o">=</span><span class="n">spi</span><span class="o">=</span><span class="n">on</span>
+<span class="n">dtoverlay</span><span class="o">=</span><span class="n">ads7846</span><span class="p">,</span><span class="n">penirq</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span><span class="n">penirq_pull</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">xohms</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span><span class="n">swapxy</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">xmin</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span><span class="n">ymin</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span><span class="n">xmax</span><span class="o">=</span><span class="mi">3800</span><span class="p">,</span><span class="n">ymax</span><span class="o">=</span><span class="mi">3400</span><span class="p">,</span><span class="n">pmax</span><span class="o">=</span><span class="mi">255</span>
+<span class="n">dtoverlay</span><span class="o">=</span><span class="n">waveshare35a</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/kmanc/waveshare35a.git</span></code> to pull down my repo</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">waveshare35a</span></code></li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">mv</span> <span class="pre">waveshare35a-overlay.dtbo</span> <span class="pre">/boot/overlays/</span></code> to put the driver files in the right place</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">mv</span> <span class="pre">LCD-show/</span> <span class="pre">..</span></code> same as above</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">..</span></code></li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">waveshare35a/</span></code> because I don’t really need it anymore</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">LCD-show/</span></code></li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">LCD35-show</span></code> so I can run the installer script</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">./LCD35-show</span></code> to run the setup script</li>
+</ul>
+<p>Now my LCD screen is working too! Nice, I’m actually pretty close now.</p>
+</div>
 </div>
 <div class="section" id="creating-an-image-so-that-you-don-t-have-to-suffer">
 <h2>Creating an image so that you don’t have to suffer<a class="headerlink" href="#creating-an-image-so-that-you-don-t-have-to-suffer" title="Permalink to this headline">¶</a></h2>
+<p>This section was purely optional, but I thought it was pretty cool and I had never done it before, so here it goes. It
+took me a long time to set up my Pi in such a way that all the things I wanted to do could even work, and that wasn’t
+really the intent of this project. I so created my own Raspbian image that did as much of the unnecessary stuff as it
+can. That way the amount of setup required to recreate my results is as little as possible.</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>First I used Win32DiskImager to read the contents of my post-setup Raspberry Pi SD card to a .img file</dt>
+<dd><ul class="first last">
+<li>I actually kinda thought it would be that easy, but unfortunately that reads the entire drive
+and I only wanted the part containing the OS</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>I did some searching and found
+<a class="reference external" href="http://www.aoakley.com/articles/2015-10-09-resizing-sd-images.php">a pretty great tutorial</a> on how to shrink an
+existing image such that the junk (actually empty space in this case) is left off. I needed a linux machine to do it
+on, but I had an Ubuntu VM lying around that fit the bill.</li>
+<li>I couldn’t remember when the last time I had used it was, so I started with good ol’
+<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">update</span> <span class="pre">&amp;&amp;</span> <span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">upgrade</span></code></li>
+<li>Now I needed to add gparted, so I ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">gparted</span></code></li>
+<li>Then I found the start sector for the partition I needed to shrink with <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">fdisk</span> <span class="pre">-l</span> <span class="pre">&lt;image_name&gt;.img</span></code></li>
+<li><dl class="first docutils">
+<dt>I had to mount that partition with <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">losetup</span> <span class="pre">/dev/loop0</span> <span class="pre">imagename.img</span> <span class="pre">-o</span> <span class="pre">$((START#*512))</span></code></dt>
+<dd><ul class="first last">
+<li>I had some trouble getting this to work the way it was described in the tutorial, so I just incremented the
+number after “loop” until I didn’t get an error message (ie, I tried <code class="docutils literal notranslate"><span class="pre">/dev/loop0</span></code>,
+<code class="docutils literal notranslate"><span class="pre">/dev/loop1</span></code>, <code class="docutils literal notranslate"><span class="pre">/dev/loop2</span></code>…)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>In gparted I selected the partition menu, and then “resize/move” and set the new size to be a little more than the
+minimum size</li>
+<li>I clicked apply all operations, and took note of the new size (and the letter that followed it, in my case, “K”) -
+we’ll call that NEWSIZE#</li>
+<li><dl class="first docutils">
+<dt>I then ran the following 3 commands, replacing 0 with the number that I had used before (for me it was 6)</dt>
+<dd><ul class="first last">
+<li>sudo losetup -d /dev/loop0</li>
+<li>sudo losetup /dev/loop0 &lt;image_name&gt;.img</li>
+<li>sudo fdisk /dev/loop0</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Within fdisk, I ran the following options</dt>
+<dd><ul class="first last">
+<li><code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">2</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">p</span> <span class="pre">2</span></code></li>
+<li>entered the START# from before</li>
+<li><code class="docutils literal notranslate"><span class="pre">+NEWSIZE#</span></code> including the letter and plus sign!</li>
+<li><code class="docutils literal notranslate"><span class="pre">w</span></code></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Now outside of fdisk, I ran the following commands, again using the correct number in place of 0</dt>
+<dd><ul class="first last">
+<li><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">fdisk</span> <span class="pre">-l</span> <span class="pre">/dev/loop0</span></code> - taking note of the end sector</li>
+<li><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">losetup</span> <span class="pre">-d</span> <span class="pre">/dev/loop0</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">truncate</span> <span class="pre">-s</span> <span class="pre">$(((END+1)*512))</span> <span class="pre">&lt;image_name&gt;.img</span></code></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>And that was it! Now I have a custom Rasbian Stretch Lite image with all the setup done for my use case.</p>
 </div>
-<div class="section" id="getting-things-running-on-the-pi">
-<h2>Getting things running on the Pi<a class="headerlink" href="#getting-things-running-on-the-pi" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="getting-this-repo-running-on-the-pi">
+<h2>Getting this repo running on the Pi<a class="headerlink" href="#getting-this-repo-running-on-the-pi" title="Permalink to this headline">¶</a></h2>
+<p>Now that my Pi was set up, it’s time to grab my code and set up some project-specific things. I…</p>
+<ul class="simple">
+<li>Ran <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/kmanc/wifi_qr.git</span></code> to get the project code</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">wifi_qr</span></code>, followed by <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">restart_networking.sh</span></code> and <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">show_qr.sh</span></code>
+to make sure that the bash scripts are allowed to run</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code> to get the Python module’s needed for the scripts to work</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">nano</span> <span class="pre">config.ini</span></code> and made a file that looks like this</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">ROUTER</span><span class="p">]</span>
+<span class="n">ip</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">router_ip_address</span><span class="o">&gt;</span>
+<span class="n">username</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">username_to_log_in_to_router</span><span class="o">&gt;</span>
+<span class="n">password</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">password_to_log_in_to_router</span><span class="o">&gt;</span>
+
+<span class="p">[</span><span class="n">WIFI</span><span class="p">]</span>
+<span class="n">ssid</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">wifi_ssid</span><span class="o">&gt;</span>
+<span class="n">password_length</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">desired_wifi_password_length</span><span class="o">&gt;</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="tying-it-all-together-in-cron">
 <h2>Tying it all together in cron<a class="headerlink" href="#tying-it-all-together-in-cron" title="Permalink to this headline">¶</a></h2>
+<p>So I got everything working manually! Cool! now all I really had to do was set up a cron job to do things automagically.
+I ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">crontab</span> <span class="pre">-e</span></code> on my Pi and entered the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># min hour day(of month) mon day(of week) command</span>
+<span class="mi">0</span> <span class="mi">2</span> <span class="mi">1</span> <span class="o">*</span> <span class="o">*</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">pi</span><span class="o">/</span><span class="n">wifi_qr</span><span class="o">/</span><span class="n">change_pass</span><span class="o">.</span><span class="n">py</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">pi</span><span class="o">/</span><span class="n">cronlogs</span><span class="o">/</span><span class="n">change</span><span class="o">.</span><span class="n">log</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
+<span class="mi">1</span> <span class="mi">2</span> <span class="mi">1</span> <span class="o">*</span> <span class="o">*</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">pi</span><span class="o">/</span><span class="n">wifi_qr</span><span class="o">/./</span><span class="n">restart_networking</span><span class="o">.</span><span class="n">sh</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">pi</span><span class="o">/</span><span class="n">cronlogs</span><span class="o">/</span><span class="n">network</span><span class="o">.</span><span class="n">log</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
+<span class="mi">2</span> <span class="mi">2</span> <span class="mi">1</span> <span class="o">*</span> <span class="o">*</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">pi</span><span class="o">/</span><span class="n">wifi_qr</span><span class="o">/</span><span class="n">generate_qr</span><span class="o">.</span><span class="n">py</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">pi</span><span class="o">/</span><span class="n">cronlogs</span><span class="o">/</span><span class="n">generate</span><span class="o">.</span><span class="n">log</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
+<span class="mi">3</span> <span class="mi">2</span> <span class="mi">1</span> <span class="o">*</span> <span class="o">*</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">pi</span><span class="o">/</span><span class="n">wifi_qr</span><span class="o">/./</span><span class="n">show_qr</span><span class="o">.</span><span class="n">sh</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">pi</span><span class="o">/</span><span class="n">cronlogs</span><span class="o">/</span><span class="n">show</span><span class="o">.</span><span class="n">log</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">I had created a “cronlogs” directory on my Pi for logging stuff just in case I ever needed to see what
+was going on</p>
+</div>
+<p>And that’s it! Now my password changes at 2am on the first of every month, and my Pi shows me a QR code that represents
+the new password. I had a lot of fun with this project, and I’d love to hear what you think about it!</p>
+</div>
+<div class="section" id="making-the-user-experience-clean-ie-version-2">
+<h2>Making the user experience clean (ie. version 2)<a class="headerlink" href="#making-the-user-experience-clean-ie-version-2" title="Permalink to this headline">¶</a></h2>
+<p>COMING SOON (tm) I hope</p>
 </div>
 </div>
 
@@ -67,14 +336,18 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Full Story</a><ul>
-<li><a class="reference internal" href="#how-do-i-change-a-password-programmatically">How do I change a password programmatically</a></li>
+<li><a class="reference internal" href="#changing-a-password-programmatically">Changing a password programmatically</a></li>
 <li><a class="reference internal" href="#generating-a-qr-code">Generating a QR code</a></li>
-<li><a class="reference internal" href="#making-the-user-experience-clean">Making the user experience clean</a></li>
-<li><a class="reference internal" href="#raspberry-pi-and-drivers-a-story-of-pain-and-suffering">Raspberry Pi and drivers…a story of pain and suffering</a></li>
 <li><a class="reference internal" href="#ssh-and-other-rasbian-configuration">SSH and other Rasbian configuration</a></li>
+<li><a class="reference internal" href="#raspberry-pi-and-drivers-a-story-of-pain-and-suffering">Raspberry Pi and drivers…a story of pain and suffering</a><ul>
+<li><a class="reference internal" href="#the-wifi-dongle">The Wifi Dongle</a></li>
+<li><a class="reference internal" href="#the-lcd-screen">The LCD Screen</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#creating-an-image-so-that-you-don-t-have-to-suffer">Creating an image so that you don’t have to suffer</a></li>
-<li><a class="reference internal" href="#getting-things-running-on-the-pi">Getting things running on the Pi</a></li>
+<li><a class="reference internal" href="#getting-this-repo-running-on-the-pi">Getting this repo running on the Pi</a></li>
 <li><a class="reference internal" href="#tying-it-all-together-in-cron">Tying it all together in cron</a></li>
+<li><a class="reference internal" href="#making-the-user-experience-clean-ie-version-2">Making the user experience clean (ie. version 2)</a></li>
 </ul>
 </li>
 </ul>

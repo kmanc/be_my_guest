@@ -13,7 +13,7 @@ use your wifi when they come to visit sucks.
 * Have a complicated password that you share with your friends
     * PRO - password probably isn't guessable/brute-forcible 
     * CON - it is most likely a pain to share that password
-    * your password still probably doesn't change often, so once it is
+    * CON - your password still probably doesn't change often, so once it is
     shared, it is shared for good
 * Rotate your (either strong or weak) password often
     * PRO - password is probably pretty safe because the amount of time it stays

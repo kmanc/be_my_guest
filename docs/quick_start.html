@@ -39,23 +39,23 @@
 <li><dl class="first docutils">
 <dt>A supported router</dt>
 <dd><ul class="first last">
-<li>My router type</li>
+<li><a class="reference external" href="https://www.amazon.com/DDW36C-CABLE-WIRELESS-ROUTER-GATEWAY/dp/B01GW4JDMI">Ubee DDW36C</a></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li>A Raspberry Pi</li>
 <li>A wifi dongle - I use
-<a class="reference external" href="https://www.amazon.com/gp/product/B011T5IF06/ref=oh_aui_detailpage_o02_s00?ie=UTF8&amp;psc=1">the OURLINK AC600</a></li>
+<a class="reference external" href="https://www.amazon.com/gp/product/B011T5IF06/">the OURLINK AC600</a></li>
 <li>An LCD screen - I use
-<a class="reference external" href="https://www.amazon.com/gp/product/B01IGBDT02/ref=oh_aui_detailpage_o05_s00?ie=UTF8&amp;psc=1">the LANDZO 3.5 inch screen</a></li>
+<a class="reference external" href="https://www.amazon.com/gp/product/B01IGBDT02/">the LANDZO 3.5 inch LCD screen</a></li>
 </ul>
 </div>
 <div class="section" id="the-easiest-way-raspbian-image">
 <h2>The easiest way - Raspbian image<a class="headerlink" href="#the-easiest-way-raspbian-image" title="Permalink to this headline">¶</a></h2>
 <p>In order to avoid driver/setup hell, I created a Raspbian (Stretch) image that has the drivers for the above hardware,
-git, fbi, python3.6, and ssh ready to go out of the box you can get the image <a class="reference external" href="https://127.0.0.1">here</a>. To use it (I always
-write my images on a Windows machine), do the following:</p>
+git, fbi, python3.6, and ssh ready to go out of the box you can get the image <a class="reference external" href="https://127.0.0.1">here</a>.
+To use it (I always write my images on a Windows machine), do the following:</p>
 <ul class="simple">
 <li>Open up Win32DiskImager, and write the .img file to your SD card</li>
 <li>Plug the Pi into power, and an ethernet cable, and SSH in with the default <code class="docutils literal notranslate"><span class="pre">pi&#64;&lt;ip_address&gt;</span></code>. The default
@@ -112,12 +112,12 @@ the Pi will connect to your wifi automatically when it boots on.</p>
 the steps of recreating the image I made from scratch. Let’s dive in:</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If you are not using the same hardware as me, you might not have to run some of these steps (particularly the</p>
+<p class="last">If you are not using the same hardware as me, you might not have to run some of these steps (particularly the
+driver ones)</p>
 </div>
-<p>driver ones)</p>
 <ul class="simple">
 <li>Write whichever version of Rasbian you want to use to your SD card. Most likely, you’ll want to use a version from
-<a href="#id3"><span class="problematic" id="id4">`the raspberry pi org https://www.raspberrypi.org/`_</span></a></li>
+<a class="reference external" href="https://www.raspberrypi.org/">the raspberry pi org</a></li>
 <li>Make a blank file called <code class="docutils literal notranslate"><span class="pre">SSH</span></code> and copy it into the boot partition so that you can remotely administer
 the Pi</li>
 <li>Plug the Pi into power, and an ethernet cable, and SSH in with the default <code class="docutils literal notranslate"><span class="pre">pi&#64;&lt;ip_address&gt;</span></code>. The default
@@ -133,8 +133,8 @@ for a bunch of packages that you’ll need for Python</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">xf</span> <span class="pre">Python-3.6.5.tar.xz</span></code> to unzip it</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">Python-3.6.5</span></code></li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">./configure</span></code> configures Python (can you see where this is going?)</li>
-<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">make</span></code> makes Python (woahhhhhhh)</li>
-<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">make</span> <span class="pre">install</span></code> uninstall Python (I think…feel free to check me on that)</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">make</span></code> makes Python (shocker)</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">make</span> <span class="pre">install</span></code> uninstall Pythons (I think…feel free to check me on that)</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">pip</span></code> because default pip comes on an old version</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">nano</span> <span class="pre">/etc/network/interfaces</span></code> and make your file look like the following (where &lt;interface&gt; is your
 wireless interface, and &lt;wifi_nickname&gt; is a name that you call your wifi)</li>
@@ -180,12 +180,14 @@ the Pi will connect to your wifi automatically when it boots on.</p>
 </div>
 <ul class="simple">
 <li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">raspberrypi-kernel-headers</span></code> because we’re about to install wifi dongle drivers</li>
-<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/kmanc/rtl8812au.git</span></code>; I’ve copied a working version of drivers here in case
-they get taken down from wherever I found them (it took some searching, I forget)</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/kmanc/rtl8812au.git</span></code>; I’ve copied a working version of drivers here
+because I made a config change to the <a class="reference external" href="https://github.com/gnab/rtl8812au">original ones I found</a> so that they
+work on the Pi out of the gate</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">rtl8812au</span></code></li>
-<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">install.sh</span></code> so you can run the installer script</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">install.sh</span></code> so you can actually run the installer script</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">./install.sh</span></code> to install the things</li>
-<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">nano</span> <span class="pre">/boot/config.txt</span></code> and add the following to the very end of the file</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">nano</span> <span class="pre">/boot/config.txt</span></code> and add the following to the very end of the file. This lets our Pi
+know what drivers we want to load for our display</li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dtparam</span><span class="o">=</span><span class="n">spi</span><span class="o">=</span><span class="n">on</span>
 <span class="n">dtoverlay</span><span class="o">=</span><span class="n">ads7846</span><span class="p">,</span><span class="n">penirq</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span><span class="n">penirq_pull</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">xohms</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span><span class="n">swapxy</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">xmin</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span><span class="n">ymin</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span><span class="n">xmax</span><span class="o">=</span><span class="mi">3800</span><span class="p">,</span><span class="n">ymax</span><span class="o">=</span><span class="mi">3400</span><span class="p">,</span><span class="n">pmax</span><span class="o">=</span><span class="mi">255</span>
@@ -199,10 +201,10 @@ are using</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">mv</span> <span class="pre">waveshare35a-overlay.dtbo</span> <span class="pre">/boot/overlays/</span></code> to put the driver files in the right place</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">mv</span> <span class="pre">LCD-show/</span> <span class="pre">..</span></code> same as above</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">..</span></code></li>
-<li>Run <code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">waveshare35a/</span></code> because you don’t really need this crap anymore</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">waveshare35a/</span></code> because you don’t really need it anymore</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">LCD-show/</span></code></li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">LCD35-show</span></code> so you can run it</li>
-<li>Run :literal:<a href="#id1"><span class="problematic" id="id2">`</span></a>sudo ./LCD35-show1 runs the setup</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">./LCD35-show</span></code> runs the setup</li>
 </ul>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -219,7 +221,18 @@ the Pi will connect to your wifi automatically when it boots on.</p>
 <li>Run <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">wifi_qr</span></code>, followed by <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">restart_networking.sh</span></code> and <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">show_qr.sh</span></code>
 to make sure that the bash scripts are allowed to run</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code> to get the Python module’s needed for the scripts to work</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">nano</span> <span class="pre">config.ini</span></code> and make a file that looks like this</li>
 </ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">ROUTER</span><span class="p">]</span>
+<span class="n">ip</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">router_ip_address</span><span class="o">&gt;</span>
+<span class="n">username</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">username_to_log_in_to_router</span><span class="o">&gt;</span>
+<span class="n">password</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">password_to_log_in_to_router</span><span class="o">&gt;</span>
+
+<span class="p">[</span><span class="n">WIFI</span><span class="p">]</span>
+<span class="n">ssid</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">wifi_ssid</span><span class="o">&gt;</span>
+<span class="n">password_length</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">desired_wifi_password_length</span><span class="o">&gt;</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="setting-cron-and-forgetting">
 <h2>Setting cron and forgetting<a class="headerlink" href="#setting-cron-and-forgetting" title="Permalink to this headline">¶</a></h2>
@@ -237,11 +250,13 @@ the code on a regular schedule</li>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">This makes the wifi password update at 2am on the first of each month - feel free to choose your own cadence!</p>
+<p class="last">The above crontab would make the wifi password update at 2am on the first of each month - feel free to choose
+your own cadence!</p>
 </div>
 <p>And that’s it! You’re ready to go. You can SSH back into the Pi at any time to change your cron schedule, which might
-be a good idea to start because the Pi won’t display a QR code representing your password until you do so. Once it’s
-there though, you can pretty much forget about maintenance - everything should run smoothly on its own.</p>
+be a good idea to start because the Pi won’t display a QR code representing your password until you do so (or you could
+run the scripts manually). Once it’s in cron though though, you can pretty much forget about maintenance - everything
+should run smoothly on its own.</p>
 </div>
 </div>
 

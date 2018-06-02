@@ -16,26 +16,32 @@ wifi_password_length = int(config['WIFI']['password_length'])
 
 new_pass = ''.join(choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=wifi_password_length))
 
-post_dict = {'PrimaryNetworkEnable': 1,
-             'ServiceSetIdentifier': wifi_ssid,
-             'ClosedNetwork': 0,
-             'BssModeRequired': 0,
-             'WpaPskAuth': 0,
-             'Wpa2PskAuth': 1,
-             'WpaEncryption': 2,
-             'WpaPreSharedKey': new_pass,
-             'PlainTextKey': '',
-             'EncryptedKey': '',
-             'WpaRekeyInterval': 0,
-             'GenerateWepKeys': 0,
-             'WepKeysGenerated': 0,
-             'commitwlanPrimaryNetwork': 1,
-             'AutoSecurity': 1}
+two_four_band_dict = {'RadioWlanInterface': 0}
+
+password_dict = {'PrimaryNetworkEnable': 1,
+                 'ServiceSetIdentifier': wifi_ssid,
+                 'ClosedNetwork': 0,
+                 'BssModeRequired': 0,
+                 'WpaPskAuth': 0,
+                 'Wpa2PskAuth': 1,
+                 'WpaEncryption': 2,
+                 'WpaPreSharedKey': new_pass,
+                 'PlainTextKey': '',
+                 'EncryptedKey': '',
+                 'WpaRekeyInterval': 0,
+                 'GenerateWepKeys': 0,
+                 'WepKeysGenerated': 0,
+                 'commitwlanPrimaryNetwork': 1,
+                 'AutoSecurity': 1}
 
 
 try:
+    response = requests.post(f'http://{router_ip}/goform/wlanRadio',
+                             data=two_four_band_dict,
+                             auth=(router_username, router_password))
+    assert response.status_code == 200
     response = requests.post(f'http://{router_ip}/goform/wlanPrimaryNetwork',
-                             data=post_dict,
+                             data=password_dict,
                              auth=(router_username, router_password))
     assert response.status_code == 200
     assert new_pass in response.content.decode("utf-8")

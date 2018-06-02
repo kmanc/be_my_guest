@@ -5,18 +5,18 @@ Quick Start
 Requirements
 ############
 * A supported router
-   * My router type
+   * `Ubee DDW36C <https://www.amazon.com/DDW36C-CABLE-WIRELESS-ROUTER-GATEWAY/dp/B01GW4JDMI>`_
 * A Raspberry Pi
 * A wifi dongle - I use
-  `the OURLINK AC600 <https://www.amazon.com/gp/product/B011T5IF06/ref=oh_aui_detailpage_o02_s00?ie=UTF8&psc=1>`_
+  `the OURLINK AC600 <https://www.amazon.com/gp/product/B011T5IF06/>`_
 * An LCD screen - I use
-  `the LANDZO 3.5 inch screen <https://www.amazon.com/gp/product/B01IGBDT02/ref=oh_aui_detailpage_o05_s00?ie=UTF8&psc=1>`_
+  `the LANDZO 3.5 inch LCD screen <https://www.amazon.com/gp/product/B01IGBDT02/>`_
 
 The easiest way - Raspbian image
 ################################
 In order to avoid driver/setup hell, I created a Raspbian (Stretch) image that has the drivers for the above hardware,
-git, fbi, python3.6, and ssh ready to go out of the box you can get the image `here <https://127.0.0.1>`_. To use it (I always
-write my images on a Windows machine), do the following:
+git, fbi, python3.6, and ssh ready to go out of the box you can get the image `here <https://127.0.0.1>`_.
+To use it (I always write my images on a Windows machine), do the following:
 
 * Open up Win32DiskImager, and write the .img file to your SD card
 * Plug the Pi into power, and an ethernet cable, and SSH in with the default :literal:`pi@<ip_address>`. The default
@@ -26,6 +26,7 @@ write my images on a Windows machine), do the following:
 * Run :literal:`sudo apt-get update && sudo apt-get upgrade` to make sure that everything is up-to-date
 * Run :literal:`sudo nano /etc/network/interfaces` and make your file look like the following (where <interface> is your
   wireless interface, and <wifi_nickname> is a name that you call your wifi)
+
 ::
 
   auto lo
@@ -45,6 +46,7 @@ write my images on a Windows machine), do the following:
 * Run :literal:`sudo nano /etc/wpa_supplicant/wpa_supplicant.conf` and make your file look like the following (where
   <wifi_nickname> is the same nickname you put in the interfaces file, <SSID> is the name your wifi displays to
   computers, and <password> is the current password to your wifi - make sure to keep the quotes in this time!)
+
 ::
 
   ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
@@ -69,10 +71,10 @@ If you don't like taking for granted that somebody else's Rasbian image is legit
 the steps of recreating the image I made from scratch. Let's dive in:
 
 .. note:: If you are not using the same hardware as me, you might not have to run some of these steps (particularly the
-driver ones)
+          driver ones)
 
 * Write whichever version of Rasbian you want to use to your SD card. Most likely, you'll want to use a version from
-  `the raspberry pi org https://www.raspberrypi.org/`_
+  `the raspberry pi org <https://www.raspberrypi.org/>`_
 * Make a blank file called :literal:`SSH` and copy it into the boot partition so that you can remotely administer
   the Pi
 * Plug the Pi into power, and an ethernet cable, and SSH in with the default :literal:`pi@<ip_address>`. The default
@@ -88,11 +90,12 @@ driver ones)
 * Run :literal:`tar xf Python-3.6.5.tar.xz` to unzip it
 * Run :literal:`cd Python-3.6.5`
 * Run :literal:`sudo ./configure` configures Python (can you see where this is going?)
-* Run :literal:`sudo make` makes Python (woahhhhhhh)
-* Run :literal:`sudo make install` uninstall Python (I think...feel free to check me on that)
+* Run :literal:`sudo make` makes Python (shocker)
+* Run :literal:`sudo make install` uninstall Pythons (I think...feel free to check me on that)
 * Run :literal:`sudo pip3 install --upgrade pip` because default pip comes on an old version
 * Run :literal:`sudo nano /etc/network/interfaces` and make your file look like the following (where <interface> is your
   wireless interface, and <wifi_nickname> is a name that you call your wifi)
+
 ::
 
   auto lo
@@ -112,6 +115,7 @@ driver ones)
 * Run :literal:`sudo nano /etc/wpa_supplicant/wpa_supplicant.conf` and make your file look like the following (where
   <wifi_nickname> is the same nickname you put in the interfaces file, <SSID> is the name your wifi displays to
   computers, and <password> is the current password to your wifi - make sure to keep the quotes in this time!)
+
 ::
 
   ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
@@ -129,13 +133,17 @@ driver ones)
 .. note:: Up to this point, we have only really done standard Raspberry Pi setup. We wrote the image to disk,
           changed some passwords, ensured the system is up-to-date, and set up wifi configuration files so that
           the Pi will connect to your wifi automatically when it boots on.
+
 * Run :literal:`sudo apt-get install raspberrypi-kernel-headers` because we're about to install wifi dongle drivers
-* Run :literal:`sudo git clone https://github.com/kmanc/rtl8812au.git`; I've copied a working version of drivers here in case
-  they get taken down from wherever I found them (it took some searching, I forget)
+* Run :literal:`sudo git clone https://github.com/kmanc/rtl8812au.git`; I've copied a working version of drivers here
+  because I made a config change to the `original ones I found <https://github.com/gnab/rtl8812au>`_ so that they
+  work on the Pi out of the gate
 * Run :literal:`cd rtl8812au`
-* Run :literal:`sudo chmod +x install.sh` so you can run the installer script
+* Run :literal:`sudo chmod +x install.sh` so you can actually run the installer script
 * Run :literal:`sudo ./install.sh` to install the things
-* Run :literal:`sudo nano /boot/config.txt` and add the following to the very end of the file
+* Run :literal:`sudo nano /boot/config.txt` and add the following to the very end of the file. This lets our Pi
+  know what drivers we want to load for our display
+
 ::
 
   dtparam=spi=on
@@ -148,10 +156,10 @@ driver ones)
 * Run :literal:`sudo mv waveshare35a-overlay.dtbo /boot/overlays/` to put the driver files in the right place
 * Run :literal:`sudo mv LCD-show/ ..` same as above
 * Run :literal:`cd ..`
-* Run :literal:`rm -rf waveshare35a/` because you don't really need this crap anymore
+* Run :literal:`rm -rf waveshare35a/` because you don't really need it anymore
 * Run :literal:`cd LCD-show/`
 * Run :literal:`sudo chmod +x LCD35-show` so you can run it
-* Run :literal:`sudo ./LCD35-show1 runs the setup
+* Run :literal:`sudo ./LCD35-show` runs the setup
 
 .. note:: Up to this point, we have only really done standard Raspberry Pi setup. We wrote the image to disk,
           changed some passwords, ensured the system is up-to-date, and set up wifi configuration files so that
@@ -165,6 +173,18 @@ Now that your Pi is set up, it's time to grab my code and set up some project-sp
 * Run :literal:`cd wifi_qr`, followed by :literal:`chmod +x restart_networking.sh` and :literal:`chmod +x show_qr.sh`
   to make sure that the bash scripts are allowed to run
 * Run :literal:`pip install -r requirements.txt` to get the Python module's needed for the scripts to work
+* Run :literal:`sudo nano config.ini` and make a file that looks like this
+
+::
+
+  [ROUTER]
+  ip = <router_ip_address>
+  username = <username_to_log_in_to_router>
+  password = <password_to_log_in_to_router>
+
+  [WIFI]
+  ssid = <wifi_ssid>
+  password_length = <desired_wifi_password_length>
 
 Setting cron and forgetting
 ###########################
@@ -172,6 +192,7 @@ Ok we are almost there! Now we just need to make this thing run on its own
 
 * Run :literal:`sudo crontab -e` and make your setup look something like this - it will be responsible for running
   the code on a regular schedule
+
 ::
 
   # min hour day(of month) mon day(of week) command
@@ -180,8 +201,10 @@ Ok we are almost there! Now we just need to make this thing run on its own
   2 2 1 * * /usr/local/bin/python3 /home/pi/wifi_qr/generate_qr.py >> /home/pi/cronlogs/generate.log 2>&1
   3 2 1 * * /home/pi/wifi_qr/./show_qr.sh >> /home/pi/cronlogs/show.log 2>&1
 
-.. note:: This makes the wifi password update at 2am on the first of each month - feel free to choose your own cadence!
+.. note:: The above crontab would make the wifi password update at 2am on the first of each month - feel free to choose
+          your own cadence!
 
 And that's it! You're ready to go. You can SSH back into the Pi at any time to change your cron schedule, which might
-be a good idea to start because the Pi won't display a QR code representing your password until you do so. Once it's
-there though, you can pretty much forget about maintenance - everything should run smoothly on its own.
+be a good idea to start because the Pi won't display a QR code representing your password until you do so (or you could
+run the scripts manually). Once it's in cron though though, you can pretty much forget about maintenance - everything
+should run smoothly on its own.
