@@ -1,4 +1,10 @@
+# Directories
 .idea/
+_build/
 
+# Files
+*.rst
 config.ini
 .DS_Store
+Makefile
+conf.py
