@@ -62,6 +62,8 @@ on a Windows machine), do the following:</p>
 <li>Open up Win32DiskImager, and write the .img file to your SD card</li>
 <li>Plug the Pi into power, and an ethernet cable, and SSH in with the default <code class="docutils literal notranslate"><span class="pre">pi&#64;&lt;ip_address&gt;</span></code>. The default
 password is “raspbian” (no quotes)</li>
+<li>This is insanely important because I didn’t know about this until recently, but if you use my image you MUST run
+<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">raspi-config</span> <span class="pre">--expand-rootfs</span></code> in order to ensure your SD card understands its own size</li>
 <li>First, I would change the default passwords to something else, by running <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">passwd</span> <span class="pre">root</span></code> and
 <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">passwd</span> <span class="pre">pi</span></code>. Please pick good passwords! I use LastPass to store mine just in case I forget</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">update</span> <span class="pre">&amp;&amp;</span> <span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">upgrade</span></code> to make sure that everything is up-to-date</li>
