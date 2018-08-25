@@ -23,6 +23,8 @@ on a Windows machine), do the following:
 * Open up Win32DiskImager, and write the .img file to your SD card
 * Plug the Pi into power, and an ethernet cable, and SSH in with the default :literal:`pi@<ip_address>`. The default
   password is "raspbian" (no quotes)
+* This is insanely important because I didn't know about this until recently, but if you use my image you MUST run
+  :literal:`sudo raspi-config --expand-rootfs` in order to ensure your SD card understands its own size
 * First, I would change the default passwords to something else, by running :literal:`sudo passwd root` and
   :literal:`sudo passwd pi`. Please pick good passwords! I use LastPass to store mine just in case I forget
 * Run :literal:`sudo apt-get update && sudo apt-get upgrade` to make sure that everything is up-to-date
