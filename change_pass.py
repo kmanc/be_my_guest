@@ -65,7 +65,7 @@ try:
             if f'ssid="{wifi_ssid}"' in line:
                 break
         update_index = index + 1
-        lines[update_index] = f'\tpsk="{new_pass}"\n'
+        lines[update_index] = f'  psk="{new_pass}"\n'
     with open('/etc/wpa_supplicant/wpa_supplicant.conf', 'w') as f:
         for line in lines:
             f.write(line)
