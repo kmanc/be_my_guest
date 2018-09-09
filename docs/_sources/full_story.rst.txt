@@ -71,17 +71,16 @@ up SSH on the Pi was the first thing I did because I am running the whole thing 
 * Made a blank file called :literal:`SSH` and copied it into the boot partition so that I can remotely administer
   the Pi
 * Plugged the Pi into power, and an ethernet cable, and SSHed in with the default :literal:`pi@<ip_address>`. The
-  default password is "raspbian" (no quotes)
+  default password is "raspberry" (no quotes)
 * I always then change the default passwords to something else, by running :literal:`sudo passwd root` and
   :literal:`sudo passwd pi`
 * Ran :literal:`sudo apt-get update && sudo apt-get upgrade` to make sure that everything is up-to-date
-* Ran :literal:`sudo apt-get install git` so I could use git
 * Ran :literal:`sudo apt-get install fbi` so you I could display to my LCD screen
-* Ran :literal:`sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev`
+* Ran :literal:`sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev`
   for a bunch of packages that I needed for Python
-* Ran :literal:`sudo wget https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tar.xz` to pull down the Python 3.6.5 release
-* Ran :literal:`tar xf Python-3.6.5.tar.xz` to unzip it
-* Ran :literal:`cd Python-3.6.5`
+* Ran :literal:`sudo wget https://www.python.org/ftp/python/3.7.0Python-3.7.0.tar.xz` to pull down the Python 3.7.0 release
+* Ran :literal:`tar xf Python-3.7.0.tar.xz` to unzip it
+* Ran :literal:`cd Python-3.7.0`
 * Ran :literal:`sudo ./configure`
 * Ran :literal:`sudo make`
 * Ran :literal:`sudo make install`
@@ -97,12 +96,12 @@ up SSH on the Pi was the first thing I did because I am running the whole thing 
   allow-hotplug eth0
   iface eth0 inet dhcp
 
-  auto <interface>
+  auto wlan0
   allow-hotplug wlan0
-  iface <interface> inet dhcp
+  iface wlan0 inet dhcp
   wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 
-  iface <wifi_nickname> inet dhcp
+  iface <CREATE_A_WIFI_NICKNAME> inet dhcp
 
 * Run :literal:`sudo nano /etc/wpa_supplicant/wpa_supplicant.conf` and set up my wifi connections like below
 
@@ -112,9 +111,9 @@ up SSH on the Pi was the first thing I did because I am running the whole thing 
   update_config=1
 
   network={
-    id_str="<wifi_nickname>"
-    ssid="<SSID>"
-    psk="<password>"
+    id_str="<THE_WIFI_NICKNAME_YOU_CREATED>"
+    ssid="<YOUR_WIFIS_SSID>"
+    psk="<YOUR_WIFIS_PASSWORD>"
     proto=RSN
     key_mgmt=WPA-PSK
     pairwise=CCMP
@@ -139,14 +138,19 @@ I had a bunch lying around because I bought a bunch for other projects that will
 uses the Realtek rtl8812au driver, so to Google I went. Fortunately for me, a few folks created
 `this repo <https://github.com/gnab/rtl8812au/>`_ which includes everything needed to set up the rtl8812au on Linux.
 However, their use-case is not configured to work as-is on the Raspberry Pi, so I forked the repo
-`here <https://github.com/kmanc/rtl8812au/>`_ and changed the config file so that all I really have to do is run the
-installer script. So to get up and running, I:
+`to my github account <https://github.com/kmanc/rtl8812au/>`_ and changed the config file so that all I really have to
+do is run the installer script. To get up and running, I:
 
+* Ran :literal:`sudo apt-get install git` so I could use git
 * Ran :literal:`sudo apt-get install raspberrypi-kernel-headers` which was needed to help set up drivers
 * Ran :literal:`sudo git clone https://github.com/kmanc/rtl8812au.git` to clone my repo
 * Ran :literal:`cd rtl8812au`
 * Ran :literal:`sudo chmod +x install.sh` so I could actually run the installer script
 * Ran :literal:`sudo ./install.sh` to install the things
+.. note:: If things don't work (because you get an error saying the /lib/modules/<numbers>/build directory doesn't
+          exist), you're in for some fun. I fixed this issue by running :literal:`sudo rpi-update` and then copying the
+          build directory from an older kernel version into the one that the update command creates. It's gross but...
+          it worked
 
 This got my wifi dongle working, which was a big plus. I was no longer tethered to ethernet.
 
@@ -174,7 +178,7 @@ them in `another repo of mine <https://github.com/kmanc/waveshare35a>`_, so that
 * Run :literal:`sudo mv waveshare35a-overlay.dtbo /boot/overlays/` to put the driver files in the right place
 * Run :literal:`sudo mv LCD-show/ ..` same as above
 * Run :literal:`cd ..`
-* Run :literal:`rm -rf waveshare35a/` because I don't really need it anymore
+* Run :literal:`sudo rm -rf waveshare35a/` because I don't really need it anymore
 * Run :literal:`cd LCD-show/`
 * Run :literal:`sudo chmod +x LCD35-show` so I can run the installer script
 * Run :literal:`sudo ./LCD35-show` to run the setup script
@@ -204,27 +208,27 @@ can. That way the amount of setup required to recreate my results is as little a
    * I had some trouble getting this to work the way it was described in the tutorial, so I just incremented the
      number after "loop" until I didn't get an error message (ie, I tried :literal:`/dev/loop0`,
      :literal:`/dev/loop1`, :literal:`/dev/loop2`...)
-* In gparted I selected the partition menu, and then "resize/move" and set the new size to be a little more than the
+* With :literal:`sudo gparted /dev/loop#` I selected the partition menu, and then "resize/move" and set the new size to be a little more than the
   minimum size
 * I clicked apply all operations, and took note of the new size (and the letter that followed it, in my case, "K") -
   we'll call that NEWSIZE#
-* I then ran the following 3 commands, replacing 0 with the number that I had used before (for me it was 6)
-   * sudo losetup -d /dev/loop0
-   * sudo losetup /dev/loop0 <image_name>.img
-   * sudo fdisk /dev/loop0
+* I then ran the following 3 commands, replacing # with the number that I had used before (for me it was 6)
+   * sudo losetup -d /dev/loop#
+   * sudo losetup /dev/loop# <image_name>.img
+   * sudo fdisk /dev/loop#
 * Within fdisk, I ran the following options
    * :literal:`d 2`
    * :literal:`n p 2`
    * entered the START# from before
    * :literal:`+NEWSIZE#` including the letter and plus sign!
    * :literal:`w`
-* Now outside of fdisk, I ran the following commands, again using the correct number in place of 0
-   * :literal:`sudo fdisk -l /dev/loop0` - taking note of the end sector
-   * :literal:`sudo losetup -d /dev/loop0`
+* Now outside of fdisk, I ran the following commands, again using the correct number in place of #
+   * :literal:`sudo fdisk -l /dev/loop#` - taking note of the end sector
+   * :literal:`sudo losetup -d /dev/loop#`
    * :literal:`truncate -s $(((END+1)*512)) <image_name>.img`
 
 And that was it! Now I have a custom Rasbian Stretch Lite image with all the setup done for my use case. It is being
-hosted `here <https://github.com/kmanc/custom_raspbian_stetch_lite/>`_ if you'd like to pull it down
+hosted `on my github account <https://github.com/kmanc/custom_raspbian_stetch_lite/>`_ if you'd like to pull it down
 
 Getting this repo running on the Pi
 ###################################
