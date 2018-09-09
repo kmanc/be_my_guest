@@ -101,17 +101,16 @@ up SSH on the Pi was the first thing I did because I am running the whole thing 
 <li>Made a blank file called <code class="docutils literal notranslate"><span class="pre">SSH</span></code> and copied it into the boot partition so that I can remotely administer
 the Pi</li>
 <li>Plugged the Pi into power, and an ethernet cable, and SSHed in with the default <code class="docutils literal notranslate"><span class="pre">pi&#64;&lt;ip_address&gt;</span></code>. The
-default password is “raspbian” (no quotes)</li>
+default password is “raspberry” (no quotes)</li>
 <li>I always then change the default passwords to something else, by running <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">passwd</span> <span class="pre">root</span></code> and
 <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">passwd</span> <span class="pre">pi</span></code></li>
 <li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">update</span> <span class="pre">&amp;&amp;</span> <span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">upgrade</span></code> to make sure that everything is up-to-date</li>
-<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">git</span></code> so I could use git</li>
 <li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">fbi</span></code> so you I could display to my LCD screen</li>
-<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">libreadline-gplv2-dev</span> <span class="pre">libncursesw5-dev</span> <span class="pre">libssl-dev</span> <span class="pre">libsqlite3-dev</span> <span class="pre">tk-dev</span> <span class="pre">libgdbm-dev</span> <span class="pre">libc6-dev</span> <span class="pre">libbz2-dev</span></code>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">libreadline-gplv2-dev</span> <span class="pre">libncursesw5-dev</span> <span class="pre">libssl-dev</span> <span class="pre">libsqlite3-dev</span> <span class="pre">tk-dev</span> <span class="pre">libgdbm-dev</span> <span class="pre">libc6-dev</span> <span class="pre">libbz2-dev</span> <span class="pre">libffi-dev</span></code>
 for a bunch of packages that I needed for Python</li>
-<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">wget</span> <span class="pre">https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tar.xz</span></code> to pull down the Python 3.6.5 release</li>
-<li>Ran <code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">xf</span> <span class="pre">Python-3.6.5.tar.xz</span></code> to unzip it</li>
-<li>Ran <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">Python-3.6.5</span></code></li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">wget</span> <span class="pre">https://www.python.org/ftp/python/3.7.0Python-3.7.0.tar.xz</span></code> to pull down the Python 3.7.0 release</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">xf</span> <span class="pre">Python-3.7.0.tar.xz</span></code> to unzip it</li>
+<li>Ran <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">Python-3.7.0</span></code></li>
 <li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">./configure</span></code></li>
 <li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">make</span></code></li>
 <li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">make</span> <span class="pre">install</span></code></li>
@@ -125,12 +124,12 @@ for a bunch of packages that I needed for Python</li>
 <span class="n">allow</span><span class="o">-</span><span class="n">hotplug</span> <span class="n">eth0</span>
 <span class="n">iface</span> <span class="n">eth0</span> <span class="n">inet</span> <span class="n">dhcp</span>
 
-<span class="n">auto</span> <span class="o">&lt;</span><span class="n">interface</span><span class="o">&gt;</span>
+<span class="n">auto</span> <span class="n">wlan0</span>
 <span class="n">allow</span><span class="o">-</span><span class="n">hotplug</span> <span class="n">wlan0</span>
-<span class="n">iface</span> <span class="o">&lt;</span><span class="n">interface</span><span class="o">&gt;</span> <span class="n">inet</span> <span class="n">dhcp</span>
+<span class="n">iface</span> <span class="n">wlan0</span> <span class="n">inet</span> <span class="n">dhcp</span>
 <span class="n">wpa</span><span class="o">-</span><span class="n">conf</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">wpa_supplicant</span><span class="o">/</span><span class="n">wpa_supplicant</span><span class="o">.</span><span class="n">conf</span>
 
-<span class="n">iface</span> <span class="o">&lt;</span><span class="n">wifi_nickname</span><span class="o">&gt;</span> <span class="n">inet</span> <span class="n">dhcp</span>
+<span class="n">iface</span> <span class="o">&lt;</span><span class="n">CREATE_A_WIFI_NICKNAME</span><span class="o">&gt;</span> <span class="n">inet</span> <span class="n">dhcp</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -140,9 +139,9 @@ for a bunch of packages that I needed for Python</li>
 <span class="n">update_config</span><span class="o">=</span><span class="mi">1</span>
 
 <span class="n">network</span><span class="o">=</span><span class="p">{</span>
-  <span class="n">id_str</span><span class="o">=</span><span class="s2">&quot;&lt;wifi_nickname&gt;&quot;</span>
-  <span class="n">ssid</span><span class="o">=</span><span class="s2">&quot;&lt;SSID&gt;&quot;</span>
-  <span class="n">psk</span><span class="o">=</span><span class="s2">&quot;&lt;password&gt;&quot;</span>
+  <span class="n">id_str</span><span class="o">=</span><span class="s2">&quot;&lt;THE_WIFI_NICKNAME_YOU_CREATED&gt;&quot;</span>
+  <span class="n">ssid</span><span class="o">=</span><span class="s2">&quot;&lt;YOUR_WIFIS_SSID&gt;&quot;</span>
+  <span class="n">psk</span><span class="o">=</span><span class="s2">&quot;&lt;YOUR_WIFIS_PASSWORD&gt;&quot;</span>
   <span class="n">proto</span><span class="o">=</span><span class="n">RSN</span>
   <span class="n">key_mgmt</span><span class="o">=</span><span class="n">WPA</span><span class="o">-</span><span class="n">PSK</span>
   <span class="n">pairwise</span><span class="o">=</span><span class="n">CCMP</span>
@@ -166,15 +165,23 @@ I had a bunch lying around because I bought a bunch for other projects that will
 uses the Realtek rtl8812au driver, so to Google I went. Fortunately for me, a few folks created
 <a class="reference external" href="https://github.com/gnab/rtl8812au/">this repo</a> which includes everything needed to set up the rtl8812au on Linux.
 However, their use-case is not configured to work as-is on the Raspberry Pi, so I forked the repo
-<a class="reference external" href="https://github.com/kmanc/rtl8812au/">here</a> and changed the config file so that all I really have to do is run the
-installer script. So to get up and running, I:</p>
+<a class="reference external" href="https://github.com/kmanc/rtl8812au/">to my github account</a> and changed the config file so that all I really have to
+do is run the installer script. To get up and running, I:</p>
 <ul class="simple">
+<li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">git</span></code> so I could use git</li>
 <li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">raspberrypi-kernel-headers</span></code> which was needed to help set up drivers</li>
 <li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/kmanc/rtl8812au.git</span></code> to clone my repo</li>
 <li>Ran <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">rtl8812au</span></code></li>
 <li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">install.sh</span></code> so I could actually run the installer script</li>
 <li>Ran <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">./install.sh</span></code> to install the things</li>
 </ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If things don’t work (because you get an error saying the /lib/modules/&lt;numbers&gt;/build directory doesn’t
+exist), you’re in for some fun. I fixed this issue by running <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">rpi-update</span></code> and then copying the
+build directory from an older kernel version into the one that the update command creates. It’s gross but…
+it worked</p>
+</div>
 <p>This got my wifi dongle working, which was a big plus. I was no longer tethered to ethernet.</p>
 </div>
 <div class="section" id="the-lcd-screen">
@@ -200,7 +207,7 @@ know what drivers I want to load for my display</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">mv</span> <span class="pre">waveshare35a-overlay.dtbo</span> <span class="pre">/boot/overlays/</span></code> to put the driver files in the right place</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">mv</span> <span class="pre">LCD-show/</span> <span class="pre">..</span></code> same as above</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">..</span></code></li>
-<li>Run <code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">waveshare35a/</span></code> because I don’t really need it anymore</li>
+<li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">waveshare35a/</span></code> because I don’t really need it anymore</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">LCD-show/</span></code></li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">LCD35-show</span></code> so I can run the installer script</li>
 <li>Run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">./LCD35-show</span></code> to run the setup script</li>
@@ -242,16 +249,16 @@ number after “loop” until I didn’t get an error message (ie, I tried <code
 </dd>
 </dl>
 </li>
-<li>In gparted I selected the partition menu, and then “resize/move” and set the new size to be a little more than the
+<li>With <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">gparted</span> <span class="pre">/dev/loop#</span></code> I selected the partition menu, and then “resize/move” and set the new size to be a little more than the
 minimum size</li>
 <li>I clicked apply all operations, and took note of the new size (and the letter that followed it, in my case, “K”) -
 we’ll call that NEWSIZE#</li>
 <li><dl class="first docutils">
-<dt>I then ran the following 3 commands, replacing 0 with the number that I had used before (for me it was 6)</dt>
+<dt>I then ran the following 3 commands, replacing # with the number that I had used before (for me it was 6)</dt>
 <dd><ul class="first last">
-<li>sudo losetup -d /dev/loop0</li>
-<li>sudo losetup /dev/loop0 &lt;image_name&gt;.img</li>
-<li>sudo fdisk /dev/loop0</li>
+<li>sudo losetup -d /dev/loop#</li>
+<li>sudo losetup /dev/loop# &lt;image_name&gt;.img</li>
+<li>sudo fdisk /dev/loop#</li>
 </ul>
 </dd>
 </dl>
@@ -269,10 +276,10 @@ we’ll call that NEWSIZE#</li>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>Now outside of fdisk, I ran the following commands, again using the correct number in place of 0</dt>
+<dt>Now outside of fdisk, I ran the following commands, again using the correct number in place of #</dt>
 <dd><ul class="first last">
-<li><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">fdisk</span> <span class="pre">-l</span> <span class="pre">/dev/loop0</span></code> - taking note of the end sector</li>
-<li><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">losetup</span> <span class="pre">-d</span> <span class="pre">/dev/loop0</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">fdisk</span> <span class="pre">-l</span> <span class="pre">/dev/loop#</span></code> - taking note of the end sector</li>
+<li><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">losetup</span> <span class="pre">-d</span> <span class="pre">/dev/loop#</span></code></li>
 <li><code class="docutils literal notranslate"><span class="pre">truncate</span> <span class="pre">-s</span> <span class="pre">$(((END+1)*512))</span> <span class="pre">&lt;image_name&gt;.img</span></code></li>
 </ul>
 </dd>
@@ -280,7 +287,7 @@ we’ll call that NEWSIZE#</li>
 </li>
 </ul>
 <p>And that was it! Now I have a custom Rasbian Stretch Lite image with all the setup done for my use case. It is being
-hosted <a class="reference external" href="https://github.com/kmanc/custom_raspbian_stetch_lite/">here</a> if you’d like to pull it down</p>
+hosted <a class="reference external" href="https://github.com/kmanc/custom_raspbian_stetch_lite/">on my github account</a> if you’d like to pull it down</p>
 </div>
 <div class="section" id="getting-this-repo-running-on-the-pi">
 <h2>Getting this repo running on the Pi<a class="headerlink" href="#getting-this-repo-running-on-the-pi" title="Permalink to this headline">¶</a></h2>

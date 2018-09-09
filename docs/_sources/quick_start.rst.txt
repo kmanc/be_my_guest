@@ -14,17 +14,19 @@ Requirements
 
 The easiest way - Raspbian image
 ################################
-In order to avoid driver/setup hell, I created a Raspbian (Stretch) image that has the drivers for the above hardware,
-git, fbi, python3.6, and ssh ready to go out of the box you can get the image
+In order to avoid driver/setup hell, I created a Raspbian (Stretch Lite) image that has the drivers for the above
+hardware, git, fbi, and python3.7, ready to go out of the box you can get the image
 `here <https://github.com/kmanc/custom_raspbian_stetch_lite/>`_ or by running
 :literal:`sudo git clone https://github.com/kmanc/custom_raspbian_stetch_lite.git`. To use it (I always write my images
 on a Windows machine), do the following:
 
 * Open up Win32DiskImager, and write the .img file to your SD card
+* Make a blank file on the boot partition called :literal:`ssh` (otherwise you won't be able to remotely administer
+  the Pi
 * Plug the Pi into power, and an ethernet cable, and SSH in with the default :literal:`pi@<ip_address>`. The default
-  password is "raspbian" (no quotes)
-* This is insanely important because I didn't know about this until recently, but if you use my image you MUST run
-  :literal:`sudo raspi-config --expand-rootfs` in order to ensure your SD card understands its own size
+  password is "raspberry" (no quotes)
+.. note:: This is insanely important because I didn't know about this until recently, but if you use my image you MUST
+          run :literal:`sudo raspi-config --expand-rootfs` in order to ensure your SD card understands its own size
 * First, I would change the default passwords to something else, by running :literal:`sudo passwd root` and
   :literal:`sudo passwd pi`. Please pick good passwords! I use LastPass to store mine just in case I forget
 * Run :literal:`sudo apt-get update && sudo apt-get upgrade` to make sure that everything is up-to-date
@@ -40,16 +42,17 @@ on a Windows machine), do the following:
   allow-hotplug eth0
   iface eth0 inet dhcp
 
-  auto <interface>
+  auto wlan0
   allow-hotplug wlan0
-  iface <interface> inet dhcp
+  iface wlan0 inet dhcp
   wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 
-  iface <wifi_nickname> inet dhcp
+  iface <CREATE_A_WIFI_NICKNAME> inet dhcp
 
 * Run :literal:`sudo nano /etc/wpa_supplicant/wpa_supplicant.conf` and make your file look like the following (where
-  <wifi_nickname> is the same nickname you put in the interfaces file, <SSID> is the name your wifi displays to
-  computers, and <password> is the current password to your wifi - make sure to keep the quotes in this time!)
+  <wifi_nickname> is the same nickname you put in the interfaces file, <YOUR_WIFIS_SSID> is the name your wifi displays
+  to computers, and <YOUR_WIFIS_PASSWORD> is the current password to your wifi - make sure to include the quotes
+  this time!)
 
 ::
 
@@ -57,9 +60,9 @@ on a Windows machine), do the following:
   update_config=1
 
   network={
-    id_str="<wifi_nickname>"
-    ssid="<SSID>"
-    psk="<password>"
+    id_str="<THE_WIFI_NICKNAME_YOU_CREATED>"
+    ssid="<YOUR_WIFIS_SSID>"
+    psk="<YOUR_WIFIS_PASSWORD>"
     proto=RSN
     key_mgmt=WPA-PSK
     pairwise=CCMP
@@ -79,26 +82,23 @@ the steps of recreating the image I made from scratch. Let's dive in:
 
 * Write whichever version of Rasbian you want to use to your SD card. Most likely, you'll want to use a version from
   `the raspberry pi org <https://www.raspberrypi.org/>`_
-* Make a blank file called :literal:`SSH` and copy it into the boot partition so that you can remotely administer
+* Make a blank file called :literal:`ssh` and copy it into the boot partition so that you can remotely administer
   the Pi
 * Plug the Pi into power, and an ethernet cable, and SSH in with the default :literal:`pi@<ip_address>`. The default
   password is "raspbian" (no quotes)
 * I would then change the default passwords to something else, by running :literal:`sudo passwd root` and
   :literal:`sudo passwd pi`. Please pick good passwords! I use LastPass to store mine just in case I forget
 * Run :literal:`sudo apt-get update && sudo apt-get upgrade` to make sure that everything is up-to-date
-* Run :literal:`sudo apt-get install git` so you can use git
-* Run :literal:`sudo apt-get install fbi` so you can use an LCD screen
-* Run :literal:`sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev`
-  for a bunch of packages that you'll need for Python
-* Run :literal:`sudo wget https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tar.xz` to pull down the Python 3.6.5 release
-* Run :literal:`tar xf Python-3.6.5.tar.xz` to unzip it
-* Run :literal:`cd Python-3.6.5`
+* Run :literal:`sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev`
+  for a bunch of packages that you'll need for Python 3.7
+* Run :literal:`sudo wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tar.xz` to pull down the Python 3.7.0 release
+* Run :literal:`tar xf Python-3.7.0.tar.xz` to unzip it
+* Run :literal:`cd Python-3.7.0`
 * Run :literal:`sudo ./configure` configures Python (can you see where this is going?)
 * Run :literal:`sudo make` makes Python (shocker)
-* Run :literal:`sudo make install` uninstall Pythons (I think...feel free to check me on that)
-* Run :literal:`sudo pip3 install --upgrade pip` because default pip comes on an old version
-* Run :literal:`sudo nano /etc/network/interfaces` and make your file look like the following (where <interface> is your
-  wireless interface, and <wifi_nickname> is a name that you call your wifi)
+* Run :literal:`sudo make install` uninstalls Python (I think...feel free to check me on that)
+* Run :literal:`sudo pip3 install --upgrade pip` because default pip is an old version
+* Run :literal:`sudo nano /etc/network/interfaces` and make your file look like the following
 
 ::
 
@@ -109,12 +109,12 @@ the steps of recreating the image I made from scratch. Let's dive in:
   allow-hotplug eth0
   iface eth0 inet dhcp
 
-  auto <interface>
+  auto wlan0
   allow-hotplug wlan0
-  iface <interface> inet dhcp
+  iface wlan0 inet dhcp
   wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 
-  iface <wifi_nickname> inet dhcp
+  iface <CREATE_A_WIFI_NICKNAME> inet dhcp
 
 * Run :literal:`sudo nano /etc/wpa_supplicant/wpa_supplicant.conf` and make your file look like the following (where
   <wifi_nickname> is the same nickname you put in the interfaces file, <SSID> is the name your wifi displays to
@@ -126,9 +126,9 @@ the steps of recreating the image I made from scratch. Let's dive in:
   update_config=1
 
   network={
-    id_str="<wifi_nickname>"
-    ssid="<SSID>"
-    psk="<password>"
+    id_str="<THE_WIFI_NICKNAME_YOU_CREATED>"
+    ssid="<YOUR_WIFIS_SSID>"
+    psk="<YOUR_WIFIS_PASSWORD>"
     proto=RSN
     key_mgmt=WPA-PSK
     pairwise=CCMP
@@ -139,12 +139,17 @@ the steps of recreating the image I made from scratch. Let's dive in:
           the Pi will connect to your wifi automatically when it boots on.
 
 * Run :literal:`sudo apt-get install raspberrypi-kernel-headers` because we're about to install wifi dongle drivers
+* Run :literal:`sudo apt-get install git` so you can use git
 * Run :literal:`sudo git clone https://github.com/kmanc/rtl8812au.git`; I've copied a working version of drivers here
   because I made a config change to the `original ones I found <https://github.com/gnab/rtl8812au>`_ so that they
   work on the Pi out of the gate
 * Run :literal:`cd rtl8812au`
 * Run :literal:`sudo chmod +x install.sh` so you can actually run the installer script
 * Run :literal:`sudo ./install.sh` to install the things
+.. note:: If things don't work (because you get an error saying the /lib/modules/<numbers>/build directory doesn't
+          exist), you're in for some fun. I fixed this issue by running :literal:`sudo rpi-update` and then copying the
+          build directory from an older kernel version into the one that the update command creates. It's gross but...
+          it worked
 * Run :literal:`sudo nano /boot/config.txt` and add the following to the very end of the file. This lets our Pi
   know what drivers we want to load for our display
 
@@ -160,14 +165,14 @@ the steps of recreating the image I made from scratch. Let's dive in:
 * Run :literal:`sudo mv waveshare35a-overlay.dtbo /boot/overlays/` to put the driver files in the right place
 * Run :literal:`sudo mv LCD-show/ ..` same as above
 * Run :literal:`cd ..`
-* Run :literal:`rm -rf waveshare35a/` because you don't really need it anymore
+* Run :literal:`sudo rm -rf waveshare35a/` because you don't really need it anymore
 * Run :literal:`cd LCD-show/`
 * Run :literal:`sudo chmod +x LCD35-show` so you can run it
 * Run :literal:`sudo ./LCD35-show` runs the setup
+* Run :literal:`sudo apt-get install fbi` so you can use an LCD screen
 
-.. note:: Up to this point, we have only really done standard Raspberry Pi setup. We wrote the image to disk,
-          changed some passwords, ensured the system is up-to-date, and set up wifi configuration files so that
-          the Pi will connect to your wifi automatically when it boots on.
+.. note:: Now we have done a little more than standard setup. We have the drivers and packages needed to use our
+          hardware, as well as some software needed for our specific project
 
 Cloning the repo
 ################
