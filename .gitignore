@@ -1,10 +1,5 @@
-# Directories
+# Dirs go here
 .idea/
-_build/
 
-# Files
-*.rst
-config.ini
+# Files go here
 .DS_Store
-Makefile
-conf.py
