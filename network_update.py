@@ -17,7 +17,7 @@ wifi_new_password = config["PASSWORD"]["value"]
 url = f"https://{administration_host}:8443/api/login"
 payload = {"username": login_username, "password": login_password}
 
-login = requests.post(url, json=payload)
+login = requests.post(url, json=payload, verify=False)
 
 try:
     assert login.status_code == 200
@@ -44,7 +44,7 @@ url = f"https://{administration_host}:8443/api/s/default/rest/wlanconf/{wifi_id}
 payload = {"x_passphrase": wifi_new_password}
 headers = {"Cookie": f"unifises={unifises} csrf_token={csrf_token}"}
 
-change = requests.put(url, json=payload, headers=headers)
+change = requests.put(url, json=payload, headers=headers, verify=False)
 
 try:
     assert change.status_code == 200
