@@ -40,5 +40,4 @@ qr.add_data(qr_code_string)
 qr.make()
 img = qr.make_image()
 img = img.resize((qr_size_x, qr_size_y))
-img.save("wifi_qr.png")
-
+img.save(f"{dir_path}/wifi_qr.png")
