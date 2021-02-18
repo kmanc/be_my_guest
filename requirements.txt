@@ -1,6 +1,0 @@
-Pillow==7.1.2
-PyGObject==3.30.4
-qrcode==6.1
-requests==2.21.0
-RPi.GPIO==0.7.0
-spidev==3.5
