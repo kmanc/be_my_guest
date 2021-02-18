@@ -25,16 +25,17 @@ except AssertionError:
     print("Problem logging in")
     sys.exit()
 
-token = login.headers.get("Set-Cookie").split(";")[0]
+token_needs_parsing = login.headers.get("Set-Cookie")
 csrf_token = login.headers.get("x-csrf-token")
 
 try:
-    assert token is not None
+    assert token_needs_parsing is not None
     assert csrf_token is not None
 except AssertionError:
     print("Problem parsing login response for tokens")
     sys.exit()
 
+token = token_needs_parsing.split(";")[0]
 url = f"https://{administration_host}:443/proxy/network/api/s/default/rest/wlanconf/{wifi_id}"
 payload = {"x_passphrase": wifi_new_password}
 headers = {"Cookie": token, "x-csrf-token": csrf_token}
@@ -42,7 +43,7 @@ change = requests.put(url, json=payload, headers=headers, verify=False)
 
 try:
     assert change.status_code == 200
-    print("Password sucessfully updated")
+    print("Password successfully updated")
 except AssertionError:
     print("Password update failed")
 
