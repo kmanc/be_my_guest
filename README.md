@@ -57,11 +57,15 @@ If you're here it's possibly because you read step 1 of the quick version and re
 Like I mentioned, I have a Unifi Cloud Key for managing my Unifi network. If you don't know if you have that, or don't know how to find out if you have that, it's totally fine (chances are you don't have it). Type `192.168.1.1` in your browser and you will probably see a login page for your management interface (if you don't see anything try `192.168.0.1`)
 
 When you get there, hopefully you'll have the credentials you need to log in; if not, it is possible that this information is printed somewhere on your modem / router. Before you log in, right click the page somewhere and click "Inspect", and in the developer tools that come up, navigate to the network tab. This allows you to see the network request that you submit when you log in. Mine looked like this:
+
 ![](images/wifi_admin_login.png)
 
 Then you'll have to figure out where within that interface you can change the wifi password, and again check out the network request that you submit when you apply that change. Most important to this step is making sure that your request includes whatever authorization was required to make the request. In my case, the response body of my login request had a cookie and a token in it. If I add both of them to my "change password" request, the network controller knows that I'm authorized to make this change. This is handled in my python code, but the first time around I had to do a little discovery. My "password change" request looked like this (it had a lot of options so its a few screenshots):
+
 ![](images/wifi_pw_change_request.png)
+
 ![](images/wifi_pw_change_headers.png)
+
 ![](images/wifi_pw_change_payload.png)
 
 #### Code to handle the requests
