@@ -25,7 +25,7 @@ qr = qrcode.QRCode(
 wifi_password = ""
 
 while len(wifi_password) < desired_password_length:
-    char_num = random.randrange(32, 126)
+    char_num = random.randrange(33, 126)
     if char_num == 37:
         continue
     wifi_password += chr(char_num)
