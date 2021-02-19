@@ -26,16 +26,25 @@ except AssertionError:
     sys.exit()
 
 token_needs_parsing = login.headers.get("Set-Cookie")
-csrf_token = login.headers.get("x-csrf-token")
 
 try:
     assert token_needs_parsing is not None
-    assert csrf_token is not None
+    token = token_needs_parsing.split(";")[0]
 except AssertionError:
-    print("Problem parsing login response for tokens")
+    print("Set-Cookie token not found in login response")
+    sys.exit()
+except SyntaxError:
+    print("Token value found is not a string")
     sys.exit()
 
-token = token_needs_parsing.split(";")[0]
+csrf_token = login.headers.get("x-csrf-token")
+
+try:
+    assert csrf_token is not None
+except AssertionError:
+    print("CSRF token not found in login response")
+    sys.exit()
+
 url = f"https://{administration_host}:443/proxy/network/api/s/default/rest/wlanconf/{wifi_id}"
 payload = {"x_passphrase": wifi_new_password}
 headers = {"Cookie": token, "x-csrf-token": csrf_token}
