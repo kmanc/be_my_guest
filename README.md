@@ -18,7 +18,7 @@ Well that's a little tricky, so I'll give you the quick version which probably w
 
 ### Quick(ish) version
 1. Have a Unifi network (if you don't you'll need to refer to the long version before moving to step 2)
-2. Connect your screen to your pi (in my case this meant soldering some pins on)
+2. Connect your screen to your pi (in my case this meant soldering some pins on following [the specified pinout](https://www.waveshare.com/wiki/4.2inch_e-Paper_Module))
 3. Download the required Python modules for your screen
 4. Clone the `WIFI_QR` repo on to your raspberry pi
 5. Install a few drivers you'll need (these ones specific to the screen / software I used)
