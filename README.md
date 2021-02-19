@@ -13,13 +13,13 @@ WIFI_QR is a little project that automatically updates my guest wifi password to
 
 ![](images/final_back.png)
 
-### How can you use it?
-Well that's a little tricky, so I'll give you the quick version which probably won't work for you, and then I'll give you the long version which you will likely need to replicate (at least in part)
-
-### Required parts
+### Parts
 * [Raspberry Pi Zero](https://www.amazon.com/Raspberry-Pi-Zero-Wireless-model/dp/B06XFZC3BX) + [Pins](https://www.amazon.com/Frienda-Break-Away-Connector-Compatible-Raspberry/dp/B083DYVWDN) or [Pre-soldered Raspberry Pi Zero](https://www.amazon.com/Raspberry-Pi-Zero-WH-pre-soldered/dp/B07NY4WN6W)
 * [E-Ink screen](https://www.amazon.com/Waveshare-Module-Resolution-Electronic-Interface/dp/B0751J99PS)
 * [Power supply](https://www.amazon.com/Raspberry-Model-Official-SC0218-Accessory/dp/B07W8XHMJZ)
+
+### How can you make one?
+Well that's a little tricky, so I'll give you the quick version which probably won't work for you, and then I'll give you the long version which you will likely need to replicate (at least in part)
 
 ### Quick(ish) version
 1. Have a Unifi network (if you don't you'll need to refer to the long version before moving to step 2)
