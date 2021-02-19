@@ -25,17 +25,18 @@ qr = qrcode.QRCode(
 wifi_password = ""
 
 while len(wifi_password) < desired_password_length:
+    # 33-126 is the ascii range of characters that don't give most text fields many problems
     char_num = random.randrange(33, 126)
+    # 37 is a % which gives some password fields trouble
     if char_num == 37:
         continue
     wifi_password += chr(char_num)
 
 config['PASSWORD']["value"] = wifi_password
 with open(f'{dir_path}/config.ini', 'w') as f:
-        config.write(f)
+    config.write(f)
 
 qr_code_string = f"WIFI:T:WPA;S:{wifi_ssid};P:{wifi_password};;"
-
 qr.add_data(qr_code_string)
 qr.make()
 img = qr.make_image()
