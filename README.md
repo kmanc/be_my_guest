@@ -1,7 +1,7 @@
 # WELCOME TO WIFI_QR
 I made this for fun over the course of a couple of days because I've always wished my guest wifi network was 
 
-1. easier for guests to joins 
+1. easier for guests to join
 2. more secure
 
 If that sounds like you, read on!
