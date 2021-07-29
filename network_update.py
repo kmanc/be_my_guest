@@ -52,7 +52,7 @@ change = requests.put(url, json=payload, headers=headers, verify=False)
 
 try:
     assert change.status_code == 200
-    print("Password successfully updated")
+    print("Network password successfully updated")
 except AssertionError:
-    print("Password update failed")
+    print("Network password update failed")
 
