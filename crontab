@@ -1,5 +1,5 @@
 # min hour day(of month) mon day(of week) command
-# This one should do every Sunday at midnight
-0 0 * * 0 /home/pi/wifi_qr/chain_scripts.sh
+# This one should do every Monday at midnight
+0 0 * * MON /home/pi/wifi_qr/chain_scripts.sh
 # This one should do every reboot
 @reboot sleep 60 && /home/pi/wifi_qr/chain_scripts.sh
