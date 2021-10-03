@@ -45,7 +45,7 @@ except AssertionError:
     print("CSRF token not found in login response")
     sys.exit()
 
-url = f"https://{administration_host}:443/proxy/network/api/s/default/rest/wlanconf/{wifi_id}"
+url = f"https://{administration_host}:443/network/default/settings/wifi/network/form/{wifi_id}"
 payload = {"x_passphrase": wifi_new_password}
 headers = {"Cookie": token, "x-csrf-token": csrf_token}
 change = requests.put(url, json=payload, headers=headers, verify=False)
