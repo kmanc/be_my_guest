@@ -2,7 +2,6 @@
 import configparser
 import os
 import requests
-import sys
 
 config = configparser.ConfigParser()
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -15,39 +14,40 @@ wifi_id = config["WIFI"]["id"]
 wifi_new_password = config["PASSWORD"]["value"]
 
 
-def create_client(login_url, login_payload):
-    session = requests.Session()
-    session.verify = False
-    login = session.post(login_url, json=login_payload, verify=False)
-    if login.status_code != 200:
-        print("Problem logging in")
-        sys.exit()
+class UnifiAuthorizationError(Exception):
+    pass
 
-    token_needs_parsing = login.headers.get("Set-Cookie")
+
+class UnifiInstantiationError(Exception):
+    pass
+
+
+def create_unifi_client(login_url, login_payload, verify_requests=False):
+    session = requests.Session()
+    session.verify = verify_requests
+    login = session.post(login_url, json=login_payload)
+    if login.status_code != 200:
+        raise UnifiAuthorizationError("Problem logging in to the cloud key")
 
     try:
-        token = token_needs_parsing.split(";")[0]
+        cookie = login.headers.get("Set-Cookie").split(";")[0]
     except AttributeError:
-        print("Set-Cookie token not found in login response")
-        sys.exit()
+        raise UnifiInstantiationError("Set-Cookie token not found in login response")
     except SyntaxError:
-        print("Token value found is not a string")
-        sys.exit()
+        raise UnifiInstantiationError("Token value found is not a string")
 
     csrf_token = login.headers.get("x-csrf-token")
-
     if csrf_token is None:
-        print("CSRF token not found in login response")
-        sys.exit()
+        raise UnifiInstantiationError("CSRF token not found in login response")
 
-    session.headers.update({"Cookie": token, "x-csrf-token": csrf_token})
+    session.headers.update({"Cookie": cookie, "x-csrf-token": csrf_token})
 
     return session
 
 
 auth_endpoint = f"https://{administration_host}:443/api/auth/login"
 auth_params = {"username": login_username, "password": login_password}
-unifi_client = create_client(auth_endpoint, auth_params)
+unifi_client = create_unifi_client(auth_endpoint, auth_params)
 network_url = f"https://{administration_host}:443/proxy/network/api/s/default/rest/wlanconf/{wifi_id}"
 network_payload = {"x_passphrase": wifi_new_password}
 
