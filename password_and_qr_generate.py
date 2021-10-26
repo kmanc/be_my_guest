@@ -3,7 +3,6 @@ import configparser
 import os
 import qrcode
 import random
-from PIL import Image
 
 config = configparser.ConfigParser()
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -22,16 +21,22 @@ qr = qrcode.QRCode(
     border=0,
 )
 
-wifi_password = ""
 
-while len(wifi_password) < desired_password_length:
-    # 33-126 is the ascii range of characters that don't give most text fields many problems
-    char_num = random.randrange(33, 126)
-    # 37 is a % which gives some password fields trouble
-    if char_num == 37:
-        continue
-    wifi_password += chr(char_num)
+def generate_password(length):
+    password = ""
 
+    while len(password) < length:
+        # 33-126 is the ascii range of characters that don't give most text fields many problems
+        char_num = random.randrange(33, 126)
+        # 37 is a %, 59 is a ; - both of which can give certain password fields trouble
+        if char_num == 37 or char_num == 59:
+            continue
+        password += chr(char_num)
+
+    return password
+
+
+wifi_password = generate_password(desired_password_length)
 config['PASSWORD']["value"] = wifi_password
 with open(f'{dir_path}/config.ini', 'w') as f:
     config.write(f)
