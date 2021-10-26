@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 epd = epd4in2.EPD()
 epd.init()
-epd.Clear(0xFF)
+epd.Clear()
 image = Image.open('wifi_qr.png')
 epd.display(epd.getbuffer(image))
 print("Screen display updated")
