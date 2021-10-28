@@ -90,6 +90,3 @@ This part is fortunately really easy if you use Python like I did. There's a pre
 
 #### Fixing the screen
 Soldering part aside, I actually had a little trouble getting my screen to work because there were a lot of moving parts. First, the waveshare e-paper screen's python modules are.....interestingly designed, and I didn't like they way it worked out of the box. So I edited the modules they give you. The TLDR is that I moved the module related to my screen size into my working directory, and then changed how they import the config so that it points to the right place. After that I found the code they provided to be a little hard to understand, so I started from scratch and only did what I needed to load and display my QR code.
-
-#### What's with the bash script and the cron job?
-I separated the code for this project in a way that seemed logical to me at the time, but then realized that meant I would need a few cron jobs to run in a specific order to get the desired result - do all the things on some regular cadence. Instead I wrote a really quick bash script that chains all three Python scripts together and called it from the cron job. Realistically you don't have to do it this way, but I only wanted each step of the process to run if they other once succeeded. `&&` provides a really easy way to do that in bash, so that's what I chose to do.
