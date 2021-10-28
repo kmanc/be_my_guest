@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import configparser
 import os
 from router_clients import UnifiClient
