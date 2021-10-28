@@ -1,5 +1,5 @@
 # min hour day(of month) mon day(of week) command
 # This one should do every Monday at midnight
-0 0 * * MON /home/pi/wifi_qr/chain_scripts.sh
+0 0 * * MON python3 /home/pi/wifi_qr/password_and_qr_generate.py && python3 /home/pi/wifi_qr/network_update.py && python3 /home/pi/wifi_qr/display_update.py
 # This one should do every reboot
-@reboot sleep 60 && /home/pi/wifi_qr/chain_scripts.sh
+@reboot sleep 60 && python3 /home/pi/wifi_qr/password_and_qr_generate.py && python3 /home/pi/wifi_qr/network_update.py && python3 /home/pi/wifi_qr/display_update.py
