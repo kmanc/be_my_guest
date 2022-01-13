@@ -28,7 +28,7 @@ def generate_password(length):
         # 33-126 is the ascii range of characters that don't give most text fields many problems
         char_num = random.randrange(33, 126)
         # 37 is a %, 59 is a ; - both of which can give certain password fields trouble
-        if char_num == 37 or char_num == 59:
+        if char_num in [34, 37, 44, 59]:
             continue
         password += chr(char_num)
 
