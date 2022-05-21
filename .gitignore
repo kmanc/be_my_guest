@@ -1,5 +1,7 @@
 # Dirs go here
 .idea/
+__pycache__/
+venv/
 
 # Files go here
 .DS_Store
