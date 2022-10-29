@@ -240,10 +240,10 @@ For the most part, the `update_wifi.py` script is pretty straightforward. It cre
 
 Then I used the management portal to manually change the guest network's password, again keeping note of the requests and parameters using dev tools.
 
-[![image_not_found](/assets/images/network_change_password.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/network_change_password.png)
+[![image_not_found](/assets/images/network_change_password.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/network_devtools_change_password.png)
 
-[![image_not_found](/assets/images/network_change_password_headers.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/network_change_password_headers.png)
+[![image_not_found](/assets/images/network_change_password_headers.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/network_devtools_change_password_headers.png)
 
-[![image_not_found](/assets/images/network_change_password_payload.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/network_change_password_payload.png)
+[![image_not_found](/assets/images/network_change_password_payload.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/network_devtools_change_password_payload.png)
 
 Armed with this information, I made a very simple Python client in `router_clients.py` that mimicked the same requests. By doing this, I'd be able to (mostly) keep the code in `update_wifi.py` the same if I ever changed network hardware, or if I wanted to add supported hardware for a friend. This is to say that other hardware _is supportable_, I just haven't built it
