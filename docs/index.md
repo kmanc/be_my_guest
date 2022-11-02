@@ -6,6 +6,10 @@ title: "Wifi QR"
 
 Wifi QR is a lazily-named project that automatically updates my guest wifi password on a set schedule. It then generates a QR code and displays it on an e-ink screen so that when my guests point their phone camera at the screen they are logged in to my guest network.
 
+[![image_not_found](/assets/images/wifi_qr_front.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/wifi_qr_front.png)
+
+[![image_not_found](/assets/images/wifi_qr_back.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/wifi_qr_back.png)
+
 ## Why though?
 
 The real motivation for this project was "to see if I could", but if you're looking for a few benefits of a project like this, here's a few:
@@ -51,6 +55,13 @@ Because my screen had connection cables included I didn't need to buy any. That 
   - [Amazon](https://www.amazon.com/Break-Away-2x20-pin-Strip-Header-Raspberry/dp/B0756KM7CY)
 - Rasberry Pi jumper cables
   - [Amazon](https://www.amazon.com/dp/B09FP2F22C)
+
+Finally for my "reverse-keylogger" to help support devices that don't have the ability to scan QR codes but do have USB ports (typically laptops), I used a Digispark development board and a USB adapter cable:
+
+- Digispark dev board
+  - [Amazon](https://www.amazon.com/ACEIRMC-Digispark-Kickstarter-Attiny85-Development/dp/B08JGL5TSV)
+- USB adapter
+  - [Amazon](https://www.amazon.com/gp/product/B00YOX4JU6)
 
 ## Raspberry Pi setup
 
@@ -116,6 +127,10 @@ Finally, I burned the image to the disk.
 
 ### Make it control the screen
 
+For some reason my Raspberry Pi was having trouble with SSH out-of-the-box. After some Googling I found out it was because of some flags set in the packets being sent; I was able to fix it by running the following command, substituting in the IP address of my Raspberry Pi.
+
+`ssh pi@pis.ip.add.res 'echo "IPQoS cs0 cs0" | sudo tee -a /etc/ssh/sshd_config && echo done`
+
 Having finished configuring a Raspberry Pi to connect to my home network and accept an SSH connection, I needed to prepare it to display a QR code to the e-ink screen. My first step was to solder the header pins to the board and figure out what pins on the screen had to connect to what pins on the board. [Waveshare's documentation](https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual#Users_Guides_of_Raspberry_Pi) is pretty helpful in this regard; because my screen had the cables connected to the screen already all I had to do was put them on the corresponding header pin
 
 [![image_not_found](/assets/images/waveshare_eink_pins.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/waveshare_eink_pins.png)
@@ -128,7 +143,7 @@ Next I had to install some packages and libraries, so I started by ensuring that
 
 Then I proceeded to install the packages.
 
-`sudo apt install git libopenjp2-7 python3-pip`
+`sudo apt install git libopenjp2-7 libusb-dev python3-pip`
 
 [![image_not_found](/assets/images/raspi_installs.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_installs.png)
 
@@ -193,6 +208,96 @@ I checked the box to enable the SPI interface.
 And finally closed the option menu.
 
 [![image_not_found](/assets/images/raspi_config_finish.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_config_finish.png)
+
+Next I moved on to setting up `micronucleus` so that I could update the bootloader on my Digispark boards, and upload Arduino scripts to them.
+
+`cd ~`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+From my home directory I cloned the repo to my Raspberry Pi.
+
+`git clone https://github.com/micronucleus/micronucleus.git`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+Then I changed into it's command line directory so I could build the executable.
+
+`cd micronucleus/commandline/`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+After that I actually built the executable.
+
+`make`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+And moved the file to a directory in my PATH so that I could run it more conveniently.
+
+`sudo cp micronucleus /usr/local/bin`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+Before leaving the `micronucleus` directory, I copied a file provided by the project to help the Raspberry Pi identify boards running the `micronucleus` bootloader.
+
+`sudo cp 49-micronucleus.rules /etc/udev/rules.d/`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+With that all done, I returned to my home directory.
+
+`cd ~`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+At this point, I upgraded the bootloader on the board I intended to use, as it shipped with a very old version.
+
+`micronucleus --run micronucleus/firmware/upgrades/upgrade-t85_default.hex`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+Although I now could _upload_ Arduino scripts to my Digispark board, I had no way to _compile_ them, so I needed the `arduino-cli` tool. I downloaded and ran the installer first.
+
+`curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+Then I moved the executable to the same directory in my PATH that I had moved `micronucleus` into.
+
+`sudo mv bin/arduino-cli /usr/local/bin`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+After that I deleted the leftover (now empty) directory that the installer had created.
+
+`rm -rf bin/`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+Next I had to teach `arduino-cli` how to work with my Digispark board and `micronucleus`, starting by creating a config file.
+
+`arduino-cli config init`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+I had to edit that config to include a specific package index for Digispark (https://raw.githubusercontent.com/ArminJo/DigistumpArduino/master/package_digistump_index.json).
+
+`nano .arduino15/arduino-cli.yaml`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+Nearly done, I had `arduino-cli` reload the config to take any actions needed based on the new config file.
+
+`arduino-cli core update-index`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+
+And finally with all that complete, I could install the proper "language" for `arduino-cli` to compile for my Digispark board.
+
+`arduino-cli core install digistump:avr`
+
+[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
 
 ## Project setup
 
