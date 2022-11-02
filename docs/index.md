@@ -127,9 +127,9 @@ Finally, I burned the image to the disk.
 
 ### Make it control the screen
 
-For some reason my Raspberry Pi was having trouble with SSH out-of-the-box. After some Googling I found out it was because of some flags set in the packets being sent; I was able to fix it by running the following command, substituting in the IP address of my Raspberry Pi.
+For some reason my Raspberry Pi was having trouble with SSH out-of-the-box. After some Googling I found out it was because of some flags set in the packets being sent and the way they interacted with my network; I was able to fix it by running the following command, substituting in the IP address of my Raspberry Pi.
 
-`ssh pi@pis.ip.add.res 'echo "IPQoS cs0 cs0" | sudo tee -a /etc/ssh/sshd_config && echo done`
+`ssh pi@pis.ip.add.res 'echo "IPQoS cs0 cs0" | sudo tee -a /etc/ssh/sshd_config && echo done && sudo reboot now'`
 
 Having finished configuring a Raspberry Pi to connect to my home network and accept an SSH connection, I needed to prepare it to display a QR code to the e-ink screen. My first step was to solder the header pins to the board and figure out what pins on the screen had to connect to what pins on the board. [Waveshare's documentation](https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual#Users_Guides_of_Raspberry_Pi) is pretty helpful in this regard; because my screen had the cables connected to the screen already all I had to do was put them on the corresponding header pin
 
@@ -213,91 +213,87 @@ Next I moved on to setting up `micronucleus` so that I could update the bootload
 
 `cd ~`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
-
 From my home directory I cloned the repo to my Raspberry Pi.
 
 `git clone https://github.com/micronucleus/micronucleus.git`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+[![image_not_found](/assets/images/raspi_micronucleus.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_micronucleus.png)
 
 Then I changed into it's command line directory so I could build the executable.
 
 `cd micronucleus/commandline/`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+[![image_not_found](/assets/images/raspi_micronucleus_commandline.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_micronucleus_commandline.png)
 
 After that I actually built the executable.
 
 `make`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+[![image_not_found](/assets/images/raspi_micronucleus_make.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_micronucleus_make.png)
 
 And moved the file to a directory in my PATH so that I could run it more conveniently.
 
 `sudo cp micronucleus /usr/local/bin`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+[![image_not_found](/assets/images/raspi_micronucleus_bin.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_micronucleus_bin.png)
 
 Before leaving the `micronucleus` directory, I copied a file provided by the project to help the Raspberry Pi identify boards running the `micronucleus` bootloader.
 
 `sudo cp 49-micronucleus.rules /etc/udev/rules.d/`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+[![image_not_found](/assets/images/raspi_micronucleus_rules.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_micronucleus_rules.png)
 
 With that all done, I returned to my home directory.
 
 `cd ~`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
-
 At this point, I upgraded the bootloader on the board I intended to use, as it shipped with a very old version.
 
 `micronucleus --run micronucleus/firmware/upgrades/upgrade-t85_default.hex`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+[![image_not_found](/assets/images/raspi_micronucleus_upgrade.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_micronucleus_upgrade.png)
 
 Although I now could _upload_ Arduino scripts to my Digispark board, I had no way to _compile_ them, so I needed the `arduino-cli` tool. I downloaded and ran the installer first.
 
 `curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+[![image_not_found](/assets/images/raspi_arduino_cli.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_arduino_cli.png)
 
 Then I moved the executable to the same directory in my PATH that I had moved `micronucleus` into.
 
 `sudo mv bin/arduino-cli /usr/local/bin`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+[![image_not_found](/assets/images/raspi_arduino_cli_bin.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_arduino_cli_bin.png)
 
 After that I deleted the leftover (now empty) directory that the installer had created.
 
 `rm -rf bin/`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+[![image_not_found](/assets/images/raspi_arduino_cli_cleanup.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_arduino_cli_cleanup.png)
 
 Next I had to teach `arduino-cli` how to work with my Digispark board and `micronucleus`, starting by creating a config file.
 
 `arduino-cli config init`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+[![image_not_found](/assets/images/raspi_arduino_cli_config_init.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_arduino_cli_config_init.png)
 
 I had to edit that config to include a specific package index for Digispark (https://raw.githubusercontent.com/ArminJo/DigistumpArduino/master/package_digistump_index.json).
 
 `nano .arduino15/arduino-cli.yaml`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+[![image_not_found](/assets/images/raspi_arduino_cli_config_change.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_arduino_cli_config_change.png)
 
 Nearly done, I had `arduino-cli` reload the config to take any actions needed based on the new config file.
 
 `arduino-cli core update-index`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+[![image_not_found](/assets/images/raspi_arduino_cli_update.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_arduino_cli_update.png)
 
 And finally with all that complete, I could install the proper "language" for `arduino-cli` to compile for my Digispark board.
 
 `arduino-cli core install digistump:avr`
 
-[![image_not_found](/assets/images/NADA.png)](https://PUTIMAGEHERE.IO.UK.COM.NET)
+[![image_not_found](/assets/images/raspi_arduino_cli_install.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_arduino_cli_install.png)
 
 ## Project setup
 
