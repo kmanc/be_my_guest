@@ -4,4 +4,4 @@ __pycache__/
 venv/
 
 # Files go here
-.DS_Store
+real_config.ini
