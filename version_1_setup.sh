@@ -7,7 +7,7 @@ cd /home/pi
 sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y
 
 # Add required packages
-sudo apt install git libopenjp2-7 libusb-dev python3-pip-y
+sudo apt install git libopenjp2-7 libusb-dev python3-pip -y
 
 # Download Broadcom library
 wget https://www.airspayce.com/mikem/bcm2835/bcm2835-1.71.tar.gz
