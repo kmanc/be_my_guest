@@ -289,7 +289,7 @@ Nearly done, I had `arduino-cli` reload the config to take any actions needed ba
 
 [![image_not_found](/assets/images/raspi_arduino_cli_update.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_arduino_cli_update.png)
 
-And finally with all that complete, I could install the proper "language" for `arduino-cli` to compile for my Digispark board.
+And finally with all that complete, I could install the proper platform for `arduino-cli` to compile for my Digispark board.
 
 `arduino-cli core install digistump:avr`
 
