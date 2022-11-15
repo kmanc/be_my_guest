@@ -1,5 +1,8 @@
 import requests
 
+# Do away with annoying error; sure we should check the cert but...
+requests.packages.urllib3.disable_warnings()
+
 
 class UnifiAuthorizationError(Exception):
     pass
@@ -14,11 +17,10 @@ class UnifiActionError(Exception):
 
 
 class UnifiClient:
-    def __init__(self, network_controller, username, password, verify_requests=False):
+    def __init__(self, network_controller, username, password):
         self.controller = network_controller
         auth_endpoint = f"https://{self.controller}:443/api/auth/login"
         self.session = requests.Session()
-        self.session.verify = verify_requests
         login_payload = {"username": username, "password": password}
         login = self.session.post(auth_endpoint, json=login_payload)
         if login.status_code != 200:

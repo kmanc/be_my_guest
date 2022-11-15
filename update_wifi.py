@@ -4,6 +4,8 @@ import epd4in2
 import os
 import qrcode
 import random
+import subprocess
+from arduino_string import sketch_template
 from PIL import Image
 from router_clients import UnifiClient
 
@@ -19,16 +21,16 @@ def generate_password(length):
             continue
         password += chr(char_num)
 
-    print("New password generated")
+    print("[+] New password generated")
     return password
 
 
 def generate_qr_code(wifi_password, screen_width, screen_height):
     qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=0,
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=0,
     )
 
     qr_code_string = f"WIFI:T:WPA;S:{wifi_ssid};P:{wifi_password};;"
@@ -36,10 +38,50 @@ def generate_qr_code(wifi_password, screen_width, screen_height):
     qr.make()
     img = qr.make_image()
     img = img.resize((screen_width, screen_height))
-    #img.save(f"{dir_path}/wifi_qr.png")
 
-    print("New QR code generated")
+    print("[+] New QR code generated")
     return img
+
+
+def update_digispark(wifi_password):
+    digispark_sketch = sketch_template.substitute(password=wifi_password)
+    try:
+        os.mkdir(f"{current_dir}/digispark_sketch")
+    except OSError:
+        pass
+
+    with open(f"{current_dir}/digispark_sketch/digispark_sketch.ino", "w") as f:
+        f.write(digispark_sketch)
+
+    try:
+        subprocess.run([
+            "arduino-cli",
+            "compile",
+            "-b",
+            "digistump:avr:digispark-tiny",
+            "-e",
+            "--build-path",
+            f"{current_dir}/digispark_sketch/build",
+            f"{current_dir}/digispark_sketch/"
+        ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except subprocess.CalledProcessError:
+        print("[-] There was a problem compiling the Arduino sketch")
+        exit(1)
+
+    subprocess.Popen([
+        "uhubctl",
+        "-l",
+        "1-1",
+        "-a",
+        "cycle",
+        "-d",
+        "5",
+    ], stdout=subprocess.DEVNULL)
+
+    subprocess.run(["micronucleus", f"{current_dir}/digispark_sketch/build/digispark_sketch.ino.hex"],
+                   stdout=subprocess.DEVNULL)
+
+    print("[+] Digispark password typer updated")
 
 
 def update_network(wifi_password):
@@ -50,7 +92,7 @@ def update_network(wifi_password):
 
     unifi_client = UnifiClient(administration_host, administration_username, administration_password)
     unifi_client.change_wifi_password(wifi_id, wifi_password)
-    print(f"Network '{wifi_id}' password updated")
+    print(f"[+] Network '{wifi_ssid}' password updated")
 
 
 def update_screen(screen_instance, img):
@@ -58,7 +100,7 @@ def update_screen(screen_instance, img):
     screen_instance.Clear()
     screen_instance.display(screen_instance.getbuffer(img))
 
-    print("Screen display updated")
+    print("[+] Screen display updated")
 
 
 if __name__ == "__main__":
@@ -66,8 +108,8 @@ if __name__ == "__main__":
     parser.add_argument('--manual', action='store_true')
     args = parser.parse_args()
     config = configparser.ConfigParser()
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    config.read(f"{dir_path}/config.ini")
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    config.read(f"{current_dir}/config.ini")
     desired_password_length = int(config["PASSWORD"]["length"])
     wifi_ssid = config["WIFI"]["ssid"]
 
@@ -81,3 +123,4 @@ if __name__ == "__main__":
     qr_code = generate_qr_code(new_password, epd.width, epd.height)
     update_network(new_password)
     update_screen(epd, qr_code)
+    update_digispark(new_password)
