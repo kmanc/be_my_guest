@@ -106,6 +106,7 @@ def update_screen(screen_instance, img):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--manual', action='store_true')
+    parser.add_argument('--v1', action='store_true')
     args = parser.parse_args()
     config = configparser.ConfigParser()
     current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -123,4 +124,5 @@ if __name__ == "__main__":
     qr_code = generate_qr_code(new_password, epd.width, epd.height)
     update_network(new_password)
     update_screen(epd, qr_code)
-    update_digispark(new_password)
+    if not args.v1:
+        update_digispark(new_password)
