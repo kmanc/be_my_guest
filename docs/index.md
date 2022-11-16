@@ -1,213 +1,47 @@
 ---
-title: "Wifi QR"
+title: "Be My Guest"
 ---
 
-# Wifi QR
+# Be My Guest
 
-Wifi QR is a lazily-named project that automatically updates my guest wifi password on a set schedule. It then generates a QR code and displays it on an e-ink screen so that when my guests point their phone camera at the screen they are logged in to my guest network.
+"Be My Guest", named after [this catchy Simpsons tune](https://www.youtube.com/watch?v=TyWVaZsUQjc) is my solution to the annoyances connecting to my Guest Wifi. I felt I had to choose between:
 
-[![image_not_found](/assets/images/wifi_qr_front.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/wifi_qr_front.png)
+- Having a complicated (i.e. more secure) password that is a pain for me to share and a worse pain for my guests to type
+- Having a simple password that is easy to share and type, but also easily guessed
 
-[![image_not_found](/assets/images/wifi_qr_back.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/wifi_qr_back.png)
+Either of these two options **also** suffered from two additional problems:
 
-## Why though?
+- Typing anything in to join my Guest Wifi is more effort than it has to be
+- The password must either never change, or the effort of re-authenticating must be repeated now and then
 
-The real motivation for this project was "to see if I could", but if you're looking for a few benefits of a project like this, here's a few:
+"Be My Guest" solves all of the above issues by reducing the barrier to entry for my guests while maintaining my minimum bar for security. It:
 
-- Having a complicated password is a good thing because it makes it hard to guess
-  - This is inconvenient for our wifi guests so we let a QR code log them in
-- Changing a password frequently is generally considered a good practice because it prevents continued (possibly unauthorized) use
-  - This is _also_ inconvenient which is why this project does it automatically
+- Changes my Guest Wifi password to a randomly-generated 30 character string every Monday morning
+- Generates a QR code based on the current password that automatically logs a device in to my Guest Wifi
+- [V2] Writes a program to a USB device that, when plugged in, types in the current password
 
-Hopefully even if you're not interested in making your own you can at least see why _I_ chose to make it. Assuming that is the case, let's see how it was done.
+As indicated above, I made two versions of "Be My Guest" based on the needs of my guests. Version 1 is best suited for environments that only have handheld mobile devices (phones, tablets, etc) join the Guest Wifi. Version 2 additionally supports devices that have USB ports (laptops, desktops, etc).
 
-## Parts list
+Version 1 | Version 2
+--------- | ----
+[![image_not_found](/assets/images/be_my_guest_v1_front.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/be_my_guest_v1_front.png) | [![image_not_found](/assets/images/be_my_guest_v2_front.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/be_my_guest_v2_front.png)
+[![image_not_found](/assets/images/be_my_guest_v1_back.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/be_my_guest_v1_back.png) | [![image_not_found](/assets/images/be_my_guest_v2_back.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/be_my_guest_v2_back.png)
 
-I needed **one** of the following:
 
-- Raspberry Pi Zero
-  - [Adafruit](https://www.adafruit.com/product/3400)
-  - [Cytron](https://www.cytron.io/p-raspberry-pi-zero-w)
-  - [ThePiHut](https://thepihut.com/products/raspberry-pi-zero-w)
-- Raspberry Pi Zero with headers
-  - [Adafruit](https://www.adafruit.com/product/3708)
-- Raspberry Pi Zero 2
-  - [Adafruit](https://www.adafruit.com/product/5291)
-  - [CanaKit](https://www.canakit.com/raspberry-pi-zero-2-w.html)
-  - [ThePiHut](https://thepihut.com/products/raspberry-pi-zero-2)
-- Raspberry Pi Zero 2 with headers
-  - [ThePiHut](https://thepihut.com/products/raspberry-pi-zero-2?variant=41181426942147)
+If you are interested in building your own version 1, check out [this guide](https://kmanc.github.io/be_my_guest/version_1.html)!
+If instead you want to build version 2, check out [this guide](https://kmanc.github.io/be_my_guest/version_2.html).
+If you're into stories and you want to see what went into building the two versions, head [over here](https://kmanc.github.io/be_my_guest/behind_the_scenes.html).
 
-Then I needed something to store stuff on because Raspberry Pi's don't have a hard / solid state drive:
 
-- SD card
-  - [Amazon](https://www.amazon.com/gp/product/B073K14CVB)
 
-Next, the screen. I used an e-ink screen because they look nice and are low-power, but any screen compatible with the Raspberry Pi should suffice:
 
-- Waveshare e-ink screen
-  - [Amazon](https://www.amazon.com/Waveshare-4-2inch-Module-Three-Color-Communicating/dp/B075FRVC4L)
-  - [Waveshare](https://www.waveshare.com/product/displays/e-paper/4.2inch-e-paper-module-c.htm)
 
-Because my screen had connection cables included I didn't need to buy any. That said I did need GPIO headers for the Raspberry Pi:
 
-- Raspberry Pi Zero GPIO headers
-  - [Amazon](https://www.amazon.com/Break-Away-2x20-pin-Strip-Header-Raspberry/dp/B0756KM7CY)
-- Rasberry Pi jumper cables
-  - [Amazon](https://www.amazon.com/dp/B09FP2F22C)
 
-Finally for my "reverse-keylogger" to help support devices that don't have the ability to scan QR codes but do have USB ports (typically laptops), I used a Digispark development board and a USB adapter cable:
 
-- Digispark dev board
-  - [Amazon](https://www.amazon.com/ACEIRMC-Digispark-Kickstarter-Attiny85-Development/dp/B08JGL5TSV)
-- USB adapter
-  - [Amazon](https://www.amazon.com/gp/product/B00YOX4JU6)
 
-## Raspberry Pi setup
 
-With the parts in hand, I needed to set up the Raspberry Pi so that I could use it for anything. Then I'd need to tailor it for the needs of this project.
-
-### Make it do anything
-
-I always format SD cards before I use them in Raspberry Pi projects, so I started by connecting the card to my Windows machine and using the tool "diskpart" from the Command Prompt.
-
-`diskpart`
-
-[![image_not_found](/assets/images/diskpart.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/diskpart.png)
-
-Within "diskpart", the first step was to find my SD card.
-
-`list disk`
-
-[![image_not_found](/assets/images/diskpart_list_disk.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/diskpart_list_disk.png)
-
-Because I know my card is about 16 GB, I selected disk 1.
-
-`select disk 1`
-
-[![image_not_found](/assets/images/diskpart_select_disk.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/diskpart_select_disk.png)
-
-After that I cleaned the disk.
-
-`clean`
-
-[![image_not_found](/assets/images/diskpart_clean.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/diskpart_clean.png)
-
-Then I created the primary partition for later use.
-
-`create partition primary`
-
-[![image_not_found](/assets/images/diskpart_create_partition.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/diskpart_create_partition.png)
-
-And last I formatted the drive.
-
-`format fs=fat32`
-
-[![image_not_found](/assets/images/diskpart_format.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/diskpart_format.png)
-
-With the SD card prepped, I downloaded an image of Raspberry Pi OS compatible with my Raspberry Pi Zero.
-
-[![image_not_found](/assets/images/raspi_os.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_os.png)
-
-Then I used the Raspberry Pi Imager to burn the image on to the disk. The imager's interface is pretty nice and allows for very easy SSH and wifi configuration (shown in a sec).
-
-[![image_not_found](/assets/images/raspi_imager.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_imager.png)
-
-Within the "Advanced options" I enabled SSH and set my desired SSH username and password.
-
-[![image_not_found](/assets/images/raspi_imager_ssh.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_imager_ssh.png)
-
-Then I configured the wifi settings so that my Raspberry Pi would connect to my home network. I had it connect to my IoT VLAN (**not** the guest network). [My home network topology](https://github.com/kmanc/unifi_network_setup) is beyond the scope of this, but it was important not to have the Raspberry Pi connect to the network whose password it would be changing.
-
-[![image_not_found](/assets/images/raspi_imager_wireless.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_imager_wireless.png)
-
-Finally, I burned the image to the disk.
-
-[![image_not_found](/assets/images/raspi_imager_write.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_imager_write.png)
-
-### Make it control the screen
-
-For some reason my Raspberry Pi was having trouble with SSH out-of-the-box. After some Googling I found out it was because of some flags set in the packets being sent and the way they interacted with my network; I was able to fix it by running the following command, substituting in the IP address of my Raspberry Pi.
-
-`ssh pi@pis.ip.add.res 'echo "IPQoS cs0 cs0" | sudo tee -a /etc/ssh/sshd_config && echo done && sudo reboot now'`
-
-Having finished configuring a Raspberry Pi to connect to my home network and accept an SSH connection, I needed to prepare it to display a QR code to the e-ink screen. My first step was to solder the header pins to the board and figure out what pins on the screen had to connect to what pins on the board. [Waveshare's documentation](https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual#Users_Guides_of_Raspberry_Pi) is pretty helpful in this regard; because my screen had the cables connected to the screen already all I had to do was put them on the corresponding header pin
-
-[![image_not_found](/assets/images/waveshare_eink_pins.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/waveshare_eink_pins.png)
-
-Next I had to install some packages and libraries, so I started by ensuring that the Raspberry Pi was up to date
-
-`sudo apt update && sudo apt upgrade`
-
-[![image_not_found](/assets/images/raspi_apt_update_and_upgrade.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_apt_update_and_upgrade.png)
-
-Then I proceeded to install the packages.
-
-`sudo apt install git libopenjp2-7 libusb-dev python3-pip`
-
-[![image_not_found](/assets/images/raspi_installs.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_installs.png)
-
-And finally I got the required broadcom library set up, starting with the download.
-
-`wget https://www.airspayce.com/mikem/bcm2835/bcm2835-1.71.tar.gz`
-
-[![image_not_found](/assets/images/raspi_broadcom_library.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_broadcom_library.png)
-
-Then I unzipped the file.
-
-`tar zxvf bcm2835-1.71.tar.gz`
-
-[![image_not_found](/assets/images/raspi_broadcom_library_unzip.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_broadcom_library_unzip.png)
-
-I changed my working directory to the newly created one.
-
-`cd bcm2835-1.71/`
-
-[![image_not_found](/assets/images/raspi_broadcom_library_directory.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_broadcom_library_directory.png)
-
-Then I ran the configuration script within it.
-
-`sudo ./configure`
-
-[![image_not_found](/assets/images/raspi_broadcom_library_configure.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_broadcom_library_configure.png)
-
-After that I had to run the make script.
-
-`sudo make`
-
-[![image_not_found](/assets/images/raspi_broadcom_library_make.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_broadcom_library_make.png)
-
-Then check the make script's completion
-
-`sudo make check`
-
-[![image_not_found](/assets/images/raspi_broadcom_library_check.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_broadcom_library_check.png)
-
-And finally install it, as everything had worked out fine.
-
-`sudo make install`
-
-[![image_not_found](/assets/images/raspi_broadcom_library_install.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_broadcom_library_install.png)
-
-With most of the software in place, I had to ensure that SPI was enabled on the Raspberry Pi.
-
-`sudo raspi-config`
-
-I chose option 3 for interface.
-
-[![image_not_found](/assets/images/raspi_config.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_config.png)
-
-Then option I4 for SPI.
-
-[![image_not_found](/assets/images/raspi_config_spi.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_config_spi.png)
-
-I checked the box to enable the SPI interface.
-
-[![image_not_found](/assets/images/raspi_config_spi_enable.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_config_spi_enable.png)
-
-And finally closed the option menu.
-
-[![image_not_found](/assets/images/raspi_config_finish.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_config_finish.png)
+DELETE ME AND ANYTHING BELOW ME
 
 Next I moved on to setting up `micronucleus` so that I could update the bootloader on my Digispark boards, and upload Arduino scripts to them.
 
@@ -295,43 +129,12 @@ And finally with all that complete, I could install the proper platform for `ard
 
 [![image_not_found](/assets/images/raspi_arduino_cli_install.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_arduino_cli_install.png)
 
-## Project setup
 
-With the Raspberry Pi set up, I needed to write the code to actually do the wifi-and-qr-code stuff. I started by changing directories to my home directory.
 
-`cd ~`
 
-From there I made a directory and started working on some Python. For anyone following along with their own Raspberry Pi, cloning my repo from Github should do the trick.
 
-`git clone https://github.com/kmanc/wifi_qr.git`
 
-[![image_not_found](/assets/images/raspi_git_clone.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_git_clone.png)
 
-My repo has two files from [Waveshare's Github repo](https://github.com/waveshare/e-Paper/tree/master/RaspberryPi_JetsonNano/python/lib/waveshare_epd) that are specific to the board that I used. The `epdconfig.py` and `epd4in2.py` files are used to control my e-ink screen.
-
-For anyone following along who has a Unifi-based home network, you're almost done! All that's left is to navigate to the project directory.
-
-`cd wifi_qr`
-
-[![image_not_found](/assets/images/raspi_wifi_qr_directory.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_wifi_qr_directory.png)
-
-Then install the project requirements.
-
-`python3 -m pip install -r requirements.txt`
-
-[![image_not_found](/assets/images/raspi_wifi_qr_installs.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_wifi_qr_installs.png)
-
-Change the `config.ini` file such that it matches your network.
-
-`nano config.ini`
-
-And set a cron schedule; I save my cron schedule in the `crontab` file within the project
-
-`crontab -e`
-
-[![image_not_found](/assets/images/raspi_crontab.png)](https://raw.githubusercontent.com/kmanc/wifi_qr/main/docs/assets/images/raspi_crontab.png)
-
-With the cron schedule that I use, every Monday morning at midnight (after any weekend guests have left) or every power cycle of the Raspberry Pi changes my guest wifi network's password and the corresponding QR code.
 
 ## How I developed the script
 
