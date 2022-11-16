@@ -5,3 +5,7 @@ plugins:
 relative_links:
   enabled: true
   collections: true
+include:
+  - behind_the_scenes.md
+  - version_1.md
+  - version_2.md

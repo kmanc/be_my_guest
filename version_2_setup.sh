@@ -57,12 +57,6 @@ sudo cp 49-micronucleus.rules /etc/udev/rules.d/
 # Change to home
 cd /home/pi
 
-# Turn off the USB ports for a few seconds in the background
-uhubctl -l 1-1 -a cycle -d 5 &
-
-# Upgrade the firmware on the connected board
-micronucleus --run micronucleus/firmware/upgrades/upgrade-t85_default.hex
-
 # Download arduino-cli
 curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
 
@@ -83,30 +77,6 @@ arduino-cli core update-index
 
 # Install required arduino-cli platform
 arduino-cli core install digistump:avr
-
-# Change to home
-cd /home/pi
-
-# Add comment to cron file
-echo "# min hour day(of month) mon day(of week) command" >> cronfile
-
-# Add comment to cron file
-echo "# This one should do every Monday at midnight" >> cronfile
-
-# Add command to cron file
-echo "0 0 * * MON python3 /home/pi/be_my_guest/update_wifi.py" >> cronfile
-
-# Add comment to cron file
-echo "# This one should do every reboot" >> cronfile
-
-# Add command to cron file
-echo "@reboot sleep 90 && python3 /home/pi/be_my_guest/update_wifi.py" >> cronfile
-
-# Install the cron job
-crontab cronfile
-
-# Remove the no-longer-needed file
-rm cronfile
 
 # Restart the Raspberry Pi
 sudo reboot now
