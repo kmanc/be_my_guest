@@ -57,6 +57,12 @@ sudo cp 49-micronucleus.rules /etc/udev/rules.d/
 # Change to home
 cd /home/pi
 
+# Turn off the USB ports for a few seconds in the background
+uhubctl -l 1-1 -a cycle -d 5 &
+
+# Upgrade the firmware on the connected board
+micronucleus --run micronucleus/firmware/upgrades/upgrade-t85_default.hex
+
 # Download arduino-cli
 curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
 
