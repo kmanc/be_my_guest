@@ -1,3 +1,3 @@
-# Wifi QR
+# Be My Guest
 
-Wifi QR's documentation [is hosted here](https://kmanc.github.io/wifi_qr)!
+Be My Guest's documentation [is hosted here](https://kmanc.github.io/be_my_guest)!
