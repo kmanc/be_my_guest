@@ -29,5 +29,7 @@ Version 1 | Version 2
 
 
 If you are interested in building your own version 1, check out [this guide](https://kmanc.github.io/be_my_guest/version_1.html)!
+
 If instead you want to build version 2, check out [this guide](https://kmanc.github.io/be_my_guest/version_2.html).
+
 If you're into stories and you want to see what went into building the two versions, head [over here](https://kmanc.github.io/be_my_guest/behind_the_scenes.html).
