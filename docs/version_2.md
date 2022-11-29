@@ -105,7 +105,7 @@ Within the "Advanced options" enable SSH and set the desired SSH username and pa
 
 [![image_not_found](/assets/images/raspi_imager_ssh.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_imager_ssh.png)
 
-Configure the Wifi settings so that the Raspberry Pi connects to the desired network. I had it connect to my IoT VLAN (**not** the guest network). [My home network topology](https://github.com/kmanc/unifi_network_setup) is beyond the scope of this guide, but it is important not to have the Raspberry Pi connect to the network whose password it will be changing.
+Configure the wifi settings so that the Raspberry Pi connects to the desired network. I had it connect to my IoT VLAN (**not** the guest network). [My home network topology](https://github.com/kmanc/unifi_network_setup) is beyond the scope of this guide, but it is important not to have the Raspberry Pi connect to the network whose password it will be changing.
 
 [![image_not_found](/assets/images/raspi_imager_wireless.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_imager_wireless.png)
 
@@ -122,6 +122,7 @@ NOTE: when you first boot the Raspberry Pi you may find that SSH is unstable. If
 You can run the following command which will complete all the steps for the sections below, or you can follow along with the sections below. 
 
 NOTE: Plug in the Digispark device before running this command.
+
 NOTE: You'll need to fill out your `config.ini` file either way (the very last step at the bottom).
 
 `curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/kmanc/be_my_guest/main/version_2_setup.sh | sh`
