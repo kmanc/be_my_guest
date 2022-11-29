@@ -10,16 +10,17 @@ char buffer[66];
 const char c0[] PROGMEM = "$password";
 
 void setup() {
+    // Make sure keyboard is ready
     DigiKeyboard.sendKeyStroke(0);
-    DigiKeyboard.delay(300);
+    DigiKeyboard.delay(250);
+    // "Type" the password
     DigiKeyboard.print( gp(c0) );
     DigiKeyboard.delay(100);
-    DigiKeyboard.sendKeyStroke(KEY_ENTER);
-    // I don't know why this has to be repeated but something isn't working right
+    // Click "Enter"
     DigiKeyboard.sendKeyStroke(KEY_ENTER);
 }
   
 void loop() {
-    // put your main code here, to run repeatedly
+    // This could run things in a loop and Arduino gets mad if you remove it
 }
 """.strip())
