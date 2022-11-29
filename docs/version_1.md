@@ -4,6 +4,16 @@ title: "Be My Guest Version 1"
 
 # Version 1
 
+## How does a user log in?
+
+Guests of mine connect differently depending on which kind of device they are using. The easiest are mobile devices like smartphones and tablets; as long as they have line-of-sight to my QR code, they can point their camera at it and they're in.
+
+[![image_not_found](/assets/images/mobile_device_connect_v1.svg)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/mobile_device_connect_v1.svg)
+
+If my guest is using a laptop or desktop, they're stuck with the ol' fashioned way; they need to get the password (usually I use a mobile phone to read the current password because I don't know it) and type it in with their hands.
+
+[![image_not_found](/assets/images/computer_connect_v1.svg)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/computer_connect_v1.svg)
+
 ## Parts list
 
 **One** of the following to be the base that gets built off of:

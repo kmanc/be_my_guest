@@ -4,6 +4,16 @@ title: "Be My Guest Version 2"
 
 # Version 2
 
+## How does a user log in?
+
+Guests of mine connect differently depending on which kind of device they are using. Version 2 smartphones and tablets connect the same way they did in version 1; as long as they have line-of-sight to my QR code, they can point their camera at it and they're in.
+
+[![image_not_found](/assets/images/mobile_device_connect_v2.svg)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/mobile_device_connect_v2.svg)
+
+Version 2 _does_ exist for a reason, and that reason is laptops and desktops which can't read a QR code as easily. Instead, guests of mine can take the Digispark ATTINY85 that is plugged into my Raspberry Pi and plug it in to their device; in about 10 seconds the password will be typed in for them.
+
+[![image_not_found](/assets/images/computer_connect_v2.svg)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/computer_connect_v2.svg)
+
 ## Parts list
 
 **One** of the following to be the base that gets built off of:
