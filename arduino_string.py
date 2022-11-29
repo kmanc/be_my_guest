@@ -10,7 +10,7 @@ char buffer[66];
 const char c0[] PROGMEM = "$password";
 
 void setup() {
-    DigiKeyboard.sendKeyPress(0);
+    DigiKeyboard.sendKeyStroke(0);
     DigiKeyboard.delay(300);
     DigiKeyboard.print( gp(c0) );
     DigiKeyboard.delay(100);
