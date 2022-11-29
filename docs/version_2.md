@@ -122,6 +122,7 @@ NOTE: when you first boot the Raspberry Pi you may find that SSH is unstable. If
 You can run the following command which will complete all the steps for the sections below, or you can follow along with the sections below. 
 
 NOTE: Plug in the Digispark device before running this command.
+
 NOTE: You'll need to fill out your `config.ini` file either way (the very last step at the bottom).
 
 `curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/kmanc/be_my_guest/main/version_2_setup.sh | sh`
