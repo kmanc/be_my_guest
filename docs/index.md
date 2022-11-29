@@ -4,23 +4,23 @@ title: "Be My Guest"
 
 # Be My Guest
 
-"Be My Guest", named after [this catchy Simpsons tune](https://www.youtube.com/watch?v=TyWVaZsUQjc) is my solution to the annoyances connecting to my Guest Wifi. I felt I had to choose between:
+"Be My Guest", named after [this catchy Simpsons tune](https://www.youtube.com/watch?v=TyWVaZsUQjc) is my solution to the annoyances connecting to my Guest wifi. I felt I had to choose between:
 
 - Having a complicated (i.e. more secure) password that is a pain for me to share and a worse pain for my guests to type
 - Having a simple password that is easy to share and type, but also easily guessed
 
 Either of these two options **also** suffered from two additional problems:
 
-- Typing anything in to join my Guest Wifi is more effort than it has to be
+- Typing anything in to join my Guest wifi is more effort than it has to be
 - The password must either never change, or the effort of re-authenticating must be repeated now and then
 
 "Be My Guest" solves all of the above issues by reducing the barrier to entry for my guests while maintaining my minimum bar for security. It:
 
-- Changes my Guest Wifi password to a randomly-generated 30 character string every Monday morning
-- Generates a QR code based on the current password that automatically logs a device in to my Guest Wifi
+- Changes my Guest wifi password to a randomly-generated 30 character string every Monday morning
+- Generates a QR code based on the current password that automatically logs a device in to my Guest wifi
 - [V2] Writes a program to a USB device that, when plugged in, types in the current password
 
-As indicated above, I made two versions of "Be My Guest" based on the needs of my guests. Version 1 is best suited for environments that only have handheld mobile devices (phones, tablets, etc) join the Guest Wifi. Version 2 additionally supports devices that have USB ports (laptops, desktops, etc).
+As indicated above, I made two versions of "Be My Guest" based on the needs of my guests. Version 1 is best suited for environments that only have handheld mobile devices (phones, tablets, etc) join the Guest wifi. Version 2 additionally supports devices that have USB ports (laptops, desktops, etc).
 
 Version 1 | Version 2
 --------- | ----
