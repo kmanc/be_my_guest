@@ -4,7 +4,7 @@ title: "Be My Guest"
 
 # Be My Guest
 
-"Be My Guest", named after [this catchy Simpsons tune](https://www.youtube.com/watch?v=TyWVaZsUQjc) is my solution to the annoyances connecting to my Guest wifi. I felt I had to choose between:
+"Be My Guest", named after [this catchy Simpsons tune](https://www.youtube.com/watch?v=TyWVaZsUQjc), is my solution to the annoyances connecting to my Guest wifi. I felt I had to choose between:
 
 - Having a complicated (i.e. more secure) password that is a pain for me to share and a worse pain for my guests to type
 - Having a simple password that is easy to share and type, but also easily guessed
