@@ -2,6 +2,7 @@ import argparse
 import configparser
 import epd4in2
 import os
+import pathlib
 import qrcode
 import random
 import subprocess
@@ -16,8 +17,8 @@ def generate_password(length):
     while len(password) < length:
         # 33-126 is the ascii range of characters that don't give most text fields many problems
         char_num = random.randrange(33, 126)
-        # 34 is ", 37 is %, 44 is ,, 59 is ; - these sometimes give password fields trouble
-        if char_num in [34, 37, 44, 59]:
+        # 34 is ", 37 is %, 44 is ,, 59 is ;, 92 is \ - these sometimes give password fields trouble
+        if char_num in [34, 37, 44, 59, 92]:
             continue
         password += chr(char_num)
 
@@ -43,33 +44,33 @@ def generate_qr_code(wifi_password, screen_width, screen_height):
     return img
 
 
-def update_digispark(wifi_password):
+def update_digispark(wifi_password, directory):
     digispark_sketch = sketch_template.substitute(password=wifi_password)
     try:
-        os.mkdir(f"{current_dir}/digispark_sketch")
+        os.mkdir(f"{directory}/digispark_sketch")
     except OSError:
         pass
 
-    with open(f"{current_dir}/digispark_sketch/digispark_sketch.ino", "w") as f:
+    with open(f"{directory}/digispark_sketch/digispark_sketch.ino", "w") as f:
         f.write(digispark_sketch)
 
     try:
         subprocess.run([
-            "arduino-cli",
+            "/usr/local/bin/arduino-cli",
             "compile",
             "-b",
             "digistump:avr:digispark-tiny",
             "-e",
             "--build-path",
-            f"{current_dir}/digispark_sketch/build",
-            f"{current_dir}/digispark_sketch/"
+            f"{directory}/digispark_sketch/build",
+            f"{directory}/digispark_sketch/"
         ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError:
         print("[-] There was a problem compiling the Arduino sketch")
         exit(1)
 
     subprocess.Popen([
-        "uhubctl",
+        "/usr/sbin/uhubctl",
         "-l",
         "1-1",
         "-a",
@@ -78,7 +79,7 @@ def update_digispark(wifi_password):
         "5",
     ], stdout=subprocess.DEVNULL)
 
-    subprocess.run(["micronucleus", f"{current_dir}/digispark_sketch/build/digispark_sketch.ino.hex"],
+    subprocess.run(["/usr/local/bin/micronucleus", f"{directory}/digispark_sketch/build/digispark_sketch.ino.hex"],
                    stdout=subprocess.DEVNULL)
 
     print("[+] Digispark password typer updated")
@@ -109,7 +110,7 @@ if __name__ == "__main__":
     parser.add_argument('--v1', action='store_true')
     args = parser.parse_args()
     config = configparser.ConfigParser()
-    current_dir = os.path.dirname(os.path.realpath(__file__))
+    current_dir = pathlib.Path(__file__).parent.resolve()
     config.read(f"{current_dir}/config.ini")
     desired_password_length = int(config["PASSWORD"]["length"])
     wifi_ssid = config["WIFI"]["ssid"]
@@ -125,4 +126,4 @@ if __name__ == "__main__":
     update_network(new_password)
     update_screen(epd, qr_code)
     if not args.v1:
-        update_digispark(new_password)
+        update_digispark(new_password, current_dir)
