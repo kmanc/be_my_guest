@@ -40,8 +40,10 @@ A "brain" for the base:
 A screen for the QR code. I used an e-ink screen because they look nice and are low-power, but any screen compatible with the Raspberry Pi should suffice:
 
 - Waveshare e-ink screen
-  - [Amazon](https://www.amazon.com/Waveshare-4-2inch-Module-Three-Color-Communicating/dp/B075FRVC4L)
-  - [Waveshare](https://www.waveshare.com/product/displays/e-paper/4.2inch-e-paper-module-c.htm)
+  - [4.2" Amazon](https://www.amazon.com/Waveshare-4-2inch-Module-Three-Color-Communicating/dp/B075FRVC4L)
+  - [4.2" Waveshare](https://www.waveshare.com/product/displays/e-paper/4.2inch-e-paper-module-c.htm)
+  - [2.7" Amazon](https://www.amazon.com/dp/B075GLM4CP?)
+  - [2.7" Waveshare](https://www.waveshare.com/product/displays/e-paper/epaper-2/2.7inch-e-paper-hat.htm)
 
 A USB device that can be programmed to automatically type in passwords
 
