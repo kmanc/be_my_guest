@@ -1,3 +1,5 @@
+gpiozero>=2.0.1
+lgpio>=0.2.2.0
 Pillow>=9.0.0
 qrcode>=7.3.1
 requests>=2.27.1

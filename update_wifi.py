@@ -1,6 +1,7 @@
 import argparse
 import configparser
-import epd4in2
+#import epd4in2
+import epd2in7_V2
 import os
 import pathlib
 import qrcode
@@ -115,7 +116,8 @@ if __name__ == "__main__":
     desired_password_length = int(config["PASSWORD"]["length"])
     wifi_ssid = config["WIFI"]["ssid"]
 
-    epd = epd4in2.EPD()
+    #epd = epd4in2.EPD()
+    epd = epd2in7_V2.EPD()
 
     if args.manual:
         new_password = config["PASSWORD"]["value"]
