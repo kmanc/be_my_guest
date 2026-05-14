@@ -12,19 +12,24 @@ from PIL import Image
 from router_clients import UnifiClient
 
 
+def escape_password_for_safety(password):
+    password = password.replace('"', '\\"')
+
+    return password
+
+
 def generate_password(length):
     password = ""
 
     while len(password) < length:
         # 33-126 is the ascii range of characters that don't give most text fields many problems
         char_num = random.randrange(33, 126)
-        # 34 is ", 37 is %, 44 is ,, 59 is ;, 92 is \ - these sometimes give password fields trouble
-        if char_num in [34, 37, 44, 59, 92]:
-            continue
         password += chr(char_num)
 
+    safe_password = escape_password_for_safety(password)
+
     print("[+] New password generated")
-    return password
+    return safe_password
 
 
 def generate_qr_code(wifi_password, screen_width, screen_height):
@@ -45,45 +50,43 @@ def generate_qr_code(wifi_password, screen_width, screen_height):
     return img
 
 
-def update_digispark(wifi_password, directory):
-    digispark_sketch = sketch_template.substitute(password=wifi_password)
-    try:
-        os.mkdir(f"{directory}/digispark_sketch")
-    except OSError:
-        pass
+def updated_trinkey_code(password):
+    safe_password = escape_password_for_safety(password)
 
-    with open(f"{directory}/digispark_sketch/digispark_sketch.ino", "w") as f:
-        f.write(digispark_sketch)
+    return f"""
+import time
+import board
+import digitalio
+import neopixel
+import usb_hid
+from adafruit_hid.keyboard import Keyboard
+from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
+from adafruit_hid.keycode import Keycode
 
-    try:
-        subprocess.run([
-            "/usr/local/bin/arduino-cli",
-            "compile",
-            "-b",
-            "digistump:avr:digispark-tiny",
-            "-e",
-            "--build-path",
-            f"{directory}/digispark_sketch/build",
-            f"{directory}/digispark_sketch/"
-        ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    except subprocess.CalledProcessError:
-        print("[-] There was a problem compiling the Arduino sketch")
-        exit(1)
+pixel = neopixel.NeoPixel(board.NEOPIXEL, 1, brightness=0.2)
+btn = digitalio.DigitalInOut(board.BUTTON)
+btn.switch_to_input(pull=digitalio.Pull.UP)
 
-    subprocess.Popen([
-        "/usr/sbin/uhubctl",
-        "-l",
-        "1-1",
-        "-a",
-        "cycle",
-        "-d",
-        "5",
-    ], stdout=subprocess.DEVNULL)
+while True:
+    # Signal ready — blue means waiting for button press
+    pixel.fill((0, 0, 255))
 
-    subprocess.run(["/usr/local/bin/micronucleus", f"{directory}/digispark_sketch/build/digispark_sketch.ino.hex"],
-                   stdout=subprocess.DEVNULL)
+    while btn.value:  # Loop until BOOT is pressed (pulled low)
+        time.sleep(0.05)
 
-    print("[+] Digispark password typer updated")
+    # Button pressed - green means button press received
+    pixel.fill((0, 0, 255))
+    time.sleep(0.5)
+
+    kbd = Keyboard(usb_hid.devices)
+    layout = KeyboardLayoutUS(kbd)
+    layout.write("{safe_password}")
+    time.sleep(0.2)
+    kbd.send(Keycode.ENTER)
+
+    # Done — go dark
+    pixel.fill((0, 0, 0))
+"""
 
 
 def update_network(wifi_password):
@@ -105,13 +108,20 @@ def update_screen(screen_instance, img):
     print("[+] Screen display updated")
 
 
+def write_code_to_trinkey(wifi_password, mount_path="/media/CIRCUITPY"):
+    code = updated_trinkey_code(wifi_password)
+    with open(os.path.join(mount_path, "code.py"), "w") as f:
+        f.write(code)
+    print("[+] Trinkey password typer updated")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--manual', action='store_true')
     parser.add_argument('--v1', action='store_true')
     args = parser.parse_args()
     config = configparser.ConfigParser()
-    current_dir = pathlib.Path(__file__).parent.resolve()
+    current_dir = pathlib.Path(__file__).resolve().parent
     config.read(f"{current_dir}/config.ini")
     desired_password_length = int(config["PASSWORD"]["length"])
     wifi_ssid = config["WIFI"]["ssid"]
@@ -128,4 +138,4 @@ if __name__ == "__main__":
     update_network(new_password)
     update_screen(epd, qr_code)
     if not args.v1:
-        update_digispark(new_password, current_dir)
+        write_code_to_trinkey(new_password)
