@@ -47,8 +47,8 @@ A screen for the QR code. I used an e-ink screen because they look nice and are 
 
 A USB device that can be programmed to automatically type in passwords
 
-- Digispark ATTINY85
-  - [Amazon](https://www.amazon.com/ACEIRMC-Digispark-Kickstarter-Attiny85-Development/dp/B08JGL5TSV/)
+- Trinkey QT2040
+  - [Microcenter](https://www.microcenter.com/product/638728/adafruit-industries-trinkey-qt2040)
 
 Possibly cables and headers. I did need GPIO headers for the Raspberry Pi, but my screen came with jumper cables so I didn't need those:
 
@@ -149,19 +149,19 @@ Install required packages. If using a different screen you may have different de
 
 Download and install any additional software. In the case of the Waveshare e-ink screen, a Broadcom library is required.
 
-`wget https://www.airspayce.com/mikem/bcm2835/bcm2835-1.71.tar.gz`
+`wget https://www.airspayce.com/mikem/bcm2835/bcm2835-1.77.tar.gz`
 
 [![image_not_found](/assets/images/raspi_broadcom_library.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_broadcom_library.png)
 
 Unzip the download.
 
-`tar zxvf bcm2835-1.71.tar.gz`
+`tar zxvf bcm2835-1.77.tar.gz`
 
 [![image_not_found](/assets/images/raspi_broadcom_library_unzip.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_broadcom_library_unzip.png)
 
 Change your working directory to the unzipped folder.
 
-`cd bcm2835-1.71/`
+`cd bcm2835-1.77/`
 
 [![image_not_found](/assets/images/raspi_broadcom_library_directory.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_broadcom_library_directory.png)
 
@@ -209,99 +209,19 @@ Close the option menu.
 
 [![image_not_found](/assets/images/raspi_config_finish.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_config_finish.png)
 
-### Arduino CLI Setup
+### Trinkey setup
 
-Move back to the home directory.
+Create a persistent mount point
 
-`cd ~`
+`sudo mkdir -p /media/CIRCUITPY`
 
-Download and run the `arduino-cli` installer.
+Ensure the pi user has read/write permissions
 
-`curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh`
+`sudo chown pi:pi /media/CIRCUITPY`
 
-[![image_not_found](/assets/images/raspi_arduino_cli.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_arduino_cli.png)
+Configure fstab to have the Trinkey device mount to the created mount point
 
-Move the executable to a location within your PATH.
-
-`sudo mv bin/arduino-cli /usr/local/bin`
-
-[![image_not_found](/assets/images/raspi_arduino_cli_bin.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_arduino_cli_bin.png)
-
-Delete "leftover" files and directories.
-
-`rm -rf bin/`
-
-[![image_not_found](/assets/images/raspi_arduino_cli_cleanup.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_arduino_cli_cleanup.png)
-
-Create an arduino config file.
-
-`arduino-cli config init`
-
-[![image_not_found](/assets/images/raspi_arduino_cli_config_init.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_arduino_cli_config_init.png)
-
-Edit the config to include a specific package index for Digispark (https://raw.githubusercontent.com/ArminJo/DigistumpArduino/master/package_digistump_index.json).
-
-`nano .arduino15/arduino-cli.yaml`
-
-[![image_not_found](/assets/images/raspi_arduino_cli_config_change.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_arduino_cli_config_change.png)
-
-Reload the config to take any actions needed based on the new config file.
-
-`arduino-cli core update-index`
-
-[![image_not_found](/assets/images/raspi_arduino_cli_update.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_arduino_cli_update.png)
-
-Install the proper platform for `arduino-cli` to compile for the Digispark board.
-
-`arduino-cli core install digistump:avr`
-
-[![image_not_found](/assets/images/raspi_arduino_cli_install.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_arduino_cli_install.png)
-
-### Micronucleus Setup
-
-Move back to the home directory.
-
-`cd ~`
-
-Cloned the repo to the Raspberry Pi.
-
-`git clone https://github.com/micronucleus/micronucleus.git`
-
-[![image_not_found](/assets/images/raspi_micronucleus.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_micronucleus.png)
-
-Move to the `commandline` directory within `micronucleus`.
-
-`cd micronucleus/commandline/`
-
-[![image_not_found](/assets/images/raspi_micronucleus_commandline.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_micronucleus_commandline.png)
-
-Build the executable.
-
-`make`
-
-[![image_not_found](/assets/images/raspi_micronucleus_make.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_micronucleus_make.png)
-
-Move the executable to a location within your PATH.
-
-`sudo cp micronucleus /usr/local/bin`
-
-[![image_not_found](/assets/images/raspi_micronucleus_bin.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_micronucleus_bin.png)
-
-Copy the `micronucleus.rules` file to the Raspberry Pi's `rules.d` directory
-
-`sudo cp 49-micronucleus.rules /etc/udev/rules.d/`
-
-[![image_not_found](/assets/images/raspi_micronucleus_rules.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_micronucleus_rules.png)
-
-Move back to the home directory.
-
-`cd ~`
-
-Upgrade the bootloader on the board if it is an old version (which is very likely).
-
-`micronucleus --run micronucleus/firmware/upgrades/upgrade-t85_default.hex`
-
-[![image_not_found](/assets/images/raspi_micronucleus_upgrade.png)](https://raw.githubusercontent.com/kmanc/be_my_guest/main/docs/assets/images/raspi_micronucleus_upgrade.png)
+`echo "LABEL=CIRCUITPY /media/CIRCUITPY vfat user,rw,umask=000,uid=1000,gid=1000,nofail,x-systemd.automount 0 0" | sudo tee /etc/fstab`
 
 ### Be My Guest Setup
 
